@@ -1,0 +1,338 @@
+handlers.ReturnCurrentVersionNew = function (args) {
+    return { "ResultCode": 0, "BannedUsers": 21, "MOTD": "MOTD FR", "SynchTime": "30", "Version": "live", "Message": "live" }
+}
+
+handlers.BanMe = function(args) {
+    var Hours = 1;
+    var Name = args.Name;
+    var result = server.BanUsers({
+        Bans: [{
+            PlayFabId: currentPlayerId,
+            DurationInHours: Hours,
+            Reason: "BANNED FOR PUTTING / JOINING NAME / CODE " + Name + ". " + Hours + ""
+        }]
+    });
+}
+
+handlers.BanMeNew = function(args) {
+    var Hours = 1;
+    var Name = args.Name;
+    var result = server.BanUsers({
+        Bans: [{
+            PlayFabId: currentPlayerId,
+            DurationInHours: Hours,
+            Reason: "BANNED FOR PUTTING / JOINING NAME / CODE " + Name + ". " + Hours + ""
+        }]
+    });
+
+}
+
+function CySided(args, type = null) {
+    var newSS = true; // make this false if ur update is below spring cleaning
+
+    const SharedGroupId = args.GameId + args.Region.toUpperCase();
+    
+    let concatItems = GetPlayerInventory(currentPlayerId);
+
+    var id = (newSS == true) ? args.ActorNr.toString() : currentPlayerId;
+
+    if (args.Type == "Create") {
+        server.CreateSharedGroup({
+            SharedGroupId: SharedGroupId
+        });
+        server.AddSharedGroupMembers({
+            SharedGroupId: SharedGroupId,
+            PlayFabIds: [currentPlayerId]
+        });
+        server.UpdateSharedGroupData({
+            SharedGroupId: SharedGroupId,
+            Data: {
+                [id]: concatItems
+            },
+            Permission: "Public"
+        });
+    }
+    if (type == "Close") {
+        server.DeleteSharedGroup({
+            SharedGroupId: SharedGroupId
+        });
+    }
+    if (args.Type == "Join") {
+        server.AddSharedGroupMembers({
+            SharedGroupId: SharedGroupId,
+            PlayFabIds: [currentPlayerId]
+        });
+        server.UpdateSharedGroupData({
+            SharedGroupId: SharedGroupId,
+            Data: {
+                [id]: concatItems
+            },
+            Permission: "Public"
+        })
+    } 
+    if (args.Type == "ClientDisconnect" || args.Type == "TimeoutDisconnect") {
+        server.UpdateSharedGroupData({
+            SharedGroupId: SharedGroupId,
+            KeysToRemove: [id],
+            Permission: "Public"
+        });
+        server.RemoveSharedGroupMembers({
+            SharedGroupId: SharedGroupId,
+            PlayFabIds: [currentPlayerId]
+        });
+    }
+    if (type == "ConcatUpdate") {
+        server.UpdateSharedGroupData({
+            SharedGroupId: SharedGroupId,
+            Data: {[id]: concatItems},
+            Permission: "Public"
+        });
+    }
+}
+
+handlers.RoomEventRaised = function (args) {
+    if (args.EvCode == 9) {
+        CySided(args, "ConcatUpdate");
+    }
+    else if (args.EvCode == 10 || args.EvCode == 199) {
+        handlers.UpdatePersonalCosmeticsList();
+    }
+}
+
+handlers.RoomJoined = function (args) {
+    CySided(args);
+}
+
+handlers.RoomCreated = function (args) {
+    CySided(args);
+}
+
+handlers.RoomClosed = function (args) {
+    CySided(args);
+}
+
+handlers.RoomLeft = function (args) {
+    CySided(args);
+}
+
+handlers.UpdatePersonalCosmeticsList = function (args) {
+    const id = currentPlayerId + "Inventory";
+    
+    try {
+        server.GetSharedGroupData({
+            SharedGroupId: id
+        });
+    }
+    catch {
+        server.CreateSharedGroup({
+            SharedGroupId: id
+        });
+        server.AddSharedGroupMembers({
+            PlayFabIds: [currentPlayerId],
+            SharedGroupId: id
+        });
+    }
+    finally {
+        server.UpdateSharedGroupData({
+            SharedGroupId: id,
+            Data: {
+                "Inventory": GetPlayerInventory(currentPlayerId)
+            },
+            Permission: "Public"
+        });
+    }
+    
+    return {};
+}
+
+
+function GetPlayerInventory(pid) {
+    let concatItems = "ITEMS.";
+    
+    var req = server.GetUserInventory({
+        PlayFabId: pid
+    });
+
+    req.Inventory?.forEach(x => {
+        concatItems += x.ItemId.toString();
+    });
+
+    return concatItems;
+}
+
+
+
+handlers.AntiVPN = function(args, context) {
+
+    var psEvent = context.playStreamEvent;
+
+    var ip = psEvent["IPV4Address"];
+
+    var response = http.request("http://ip-api.com/json/" + ip + "?fields=16974336","GET", JSON.stringify({}),"application/json",{})
+
+    var resposeJson = JSON.parse(response)
+
+    if (resposeJson["proxy"] == true || resposeJson["hosting"] == true) {
+
+        server.BanUsers({
+
+                Bans: [{
+
+                    PlayFabId: currentPlayerId,
+
+                    IPAddress: 0,
+
+                    DurationInHours: 72,
+
+                    Reason: "CHEATING. VPN USAGE. ID: " + currentPlayerId
+
+                }]
+
+            });
+
+        server.DeletePlayer({PlayFabId:currentPlayerId});
+
+    }
+
+}
+
+
+handlers.GorillaAuth = function(args) {
+    var result = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    })
+    
+    const customid = result.UserInfo.CustomIdInfo.CustomId;
+    
+    //dont ban OCULUS
+    
+    
+    if (customid.includes("OCULUS1") || customid.includes("OCULUS2") || customid.includes("OCULUS2") || customid.includes("OCULUS3") || customid.includes("OCULUS4") || customid.includes("OCULUS5") || customid.includes("OCULUS6") || customid.includes("OCULUS7") || customid.includes("OCULUS8") || customid.includes("OCULUS9")) {
+       
+         var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "tuff!",
+                "color": 65280, 
+                "author": {
+                    "name": "NORMAL BLAWG LOGGED ON"
+                },
+                "description": "**USER ID:** " + currentPlayerId + "\nCUSTOMID:|| " + customid + "||",
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346653028345839708/Z68vaimY3ZxXMGhDwrvPxZ8q7Rnco5z998uIG1nfR1jRC6vMqTE05qR_fIEEW8RIj82I"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+    }else{
+         var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "CHEATER!",
+                "color": 16711680, 
+                "author": {
+                    "name": "INVALID guy LOGGED IN"
+                },
+                "description": "**USER ID:** " + currentPlayerId + "\nCUSTOMID:|| " + customid + "||",
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+        
+        var url = "https://discord.com/api/webhooks/1346653028345839708/Z68vaimY3ZxXMGhDwrvPxZ8q7Rnco5z998uIG1nfR1jRC6vMqTE05qR_fIEEW8RIj82I"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+        
+        server.DeletePlayer({
+            PlayFabId: currentPlayerId
+        })
+        
+        server.BanUsers({
+            Bans: [{
+                DurationInHours: 0,
+                IPAddress: 0,
+                PlayFabId: currentPlayerId,
+                Reason: "CHEATING"
+            }]
+        })
+    }
+    
+    //list of banned customs
+    
+    if (customid.includes("H") || customid.includes("J") || customid.includes("T")||customid.includes("A")||customid.includes("B")||customid.includes("D")||customid.includes("E")||customid.includes("F")|| customid.includes("G")||customid.includes("H")||customid.includes("I")||customid.includes("J")||customid.includes("K")||customid.includes("M")||customid.includes("N")||customid.includes("P")||customid.includes("Q")||customid.includes("R")||customid.includes("T")||customid.includes("V")||customid.includes("W")||customid.includes("X")||customid.includes("Y")||customid.includes("Z")||customid.includes("h") || customid.includes("j") || customid.includes("t")||customid.includes("a")||customid.includes("b")||customid.includes("d")||customid.includes("e")||customid.includes("f")|| customid.includes("g")||customid.includes("h")||customid.includes("i")||customid.includes("j")||customid.includes("k")||customid.includes("l")||customid.includes("m")||customid.includes("n")||customid.includes("p")||customid.includes("q")||customid.includes("r")||customid.includes("t")||customid.includes("v")||customid.includes("w")||customid.includes("x")||customid.includes("y")||customid.includes("z")||customid.includes(".")||customid.includes("@")) {
+                
+                
+                server.DeletePlayer({
+            PlayFabId: currentPlayerId
+        })
+        
+        
+        server.BanUsers({
+            Bans: [{
+                DurationInHours: 0,
+                IPAddress: 0,
+                PlayFabId: currentPlayerId,
+                Reason: "CHEATING"
+            }]
+        })
+        
+
+        
+    }
+    
+    if (customid.length > 22 && customid.length !== 23) {
+         var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": null,
+                "color": 16711680, 
+                "author": {
+                    "name": "INVALID CUSTOM ID FOUND"
+                },
+                "description": "**USER ID:** " + currentPlayerId + "\nCUSTOMID:|| " + customid + "||",
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346653028345839708/Z68vaimY3ZxXMGhDwrvPxZ8q7Rnco5z998uIG1nfR1jRC6vMqTE05qR_fIEEW8RIj82I"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+        server.DeletePlayer({
+            PlayFabId: currentPlayerId
+        })
+        
+        server.BanUsers({
+            Bans: [{
+                DurationInHours: 0,
+                IPAddress: 0,
+                PlayFabId: currentPlayerId,
+                Reason: "CHEATING, INVALID CUSTOM ID"
+            }]
+        })
+    }
+
+}

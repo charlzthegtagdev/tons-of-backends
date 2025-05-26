@@ -1,0 +1,1211 @@
+const CheatReasons = [
+    "trying to inappropriately create game managers",
+    "inappropriate tag data being sent",
+    "room host force changed",
+    "trying to create multiple game managers",
+    "possible kick attempt",
+    "gorvity bisdabled",
+    "inappropriate tag data being sent creating multiple vrrigs",
+    "tee hee",
+    "taking master to ban player",
+	"inappropriate tag data being sent",
+]
+
+InstaKick = [
+    "",//
+]
+
+Tmods = [
+    "CCD30B71A7EF931F",//
+    "",//
+]
+
+Moderators = [
+    "",//breezy
+    "",//spect
+    "",//index
+    "",//dizzy
+    "",//icy
+    "",//
+    "",//jules
+]
+
+KindaHigherThenMod = [
+    "B958FD0C5F22AB38",//vonz
+    "7A232F605E41F593",//astro
+    "",//
+    "",//
+    "634E098EB090688D",//kalbit
+]
+
+Huh = [
+    "4D54DDDB7B5A363F",//qwizx
+    "D5EDCA6A34334D26",//swertzz
+    "59EB07AC54D96979",//jaz
+    "D6842EB572673467",//stickg
+    "EB63F0098710D104",//swertzz
+]
+ 
+Unbannable = [
+    "4D54DDDB7B5A363F",//qwizx
+    "B958FD0C5F22AB38",//vonz
+    "59EB07AC54D96979",//jaz
+    "D6842EB572673467",//stickg
+    "EB63F0098710D104",//swertzz
+]
+
+Admins = [
+    "4D54DDDB7B5A363F",//qwizx
+]
+
+TrackerPing = {
+   "" : "**KING177 - OWNER**",
+   "" : "TRIXE - OWNER**",
+   "" : "STICKG - COMMUNITY MANAGER",
+   "" : "JAZ - COMMUNITY MANAGER",
+   "" : "ASTRO - MODERATOR",
+   "D5EDCA6A34334D26" : "**SWERTZZ - OWNER**",
+   "71BBDBF1A351BD9A" : "SPECT - IN-GAME MOD",
+   "634E098EB090688D" : "KALBITE - ADMIN",
+   "6E394BA192452881" : "BREEZY - ADMIN",
+   "EEA21118A8C8ED01" : "JULES - TRIAL MOD",
+}
+
+const BadNames = [
+  "KKK",
+  "PENIS",
+  "NIGG",
+  "NEG",
+  "NIGA",
+  "MONKEYSLAVE",
+  "SLAVE",
+  "FAG",
+  "NAGGI",
+  "TRANNY",
+  "QUEER",
+  "KYS",
+  "DICK",
+  "PUSSY",
+  "VAGINA",
+  "BIGBLACKCOCK",
+  "DILDO",
+  "HITLER",
+  "KKX",
+  "XKK",
+  "NIGA",
+  "NIGE",
+  "NIG",
+  "NI6",
+  "PORN",
+  "JEW",
+  "JAXX",
+  "TTTPIG",
+  "SEX",
+  "COCK",
+  "CUM",
+  "FUCK",
+  "PENIS",
+  "DICK",
+  "ELLIOT",
+  "JMAN",
+  "K9",
+  "NIGGA",
+  "TTTPIG",
+  "NICKER",
+  "NICKA",
+  "REEL",
+  "NII",
+  "@here",
+  "!",
+  " ",
+  "JMAN",
+  "PPPTIG",
+  "CLEANINGBOT",
+  "JANITOR",
+  "K9",
+  "H4PKY",
+  "MOSA",
+  "NIGGER",
+  "NIGGA",
+  "IHATENIGGERS",
+  "@everyone"
+];
+
+var UserID = "";
+
+
+handlers.CheckForBadName = function (args, context) {
+    const badNames = [
+        "KKK", "PENIS", "NIGG", "NEG", "NIGA", "MONKEYSLAVE", "SLAVE", "FAG", 
+        "NAGGI", "TRANNY", "QUEER", "KYS", "DICK", "PUSSY", "VAGINA", "BIGBLACKCOCK", 
+        "DILDO", "HITLER", "KKX", "XKK", "NIGA", "NIGE", "NIG", "NI6", "PORN", 
+        "JEW", "JAXX", "TTTPIG", "SEX", "COCK", "CUM", "FUCK", "PENIS", "DICK", 
+        "ELLIOT", "JMAN", "K9", "NIGGA", "TTTPIG", "NICKER", "NICKA", 
+        "REEL", "NII", "@here", "!", " ", "JMAN", "PPPTIG", "CLEANINGBOT", "JANITOR", "K9", 
+        "H4PKY", "MOSA", "NIGGER", "NIGGA", "IHATENIGGERS", "@everyone", "TTT"
+    ];
+
+    var getPlayerProfileRequest = {
+        PlayFabId: currentPlayerId
+    };
+    var playerProfile = server.GetPlayerProfile(getPlayerProfileRequest);
+    var displayName = playerProfile.PlayerProfile.DisplayName;
+
+    if (badNames.includes(displayName.toUpperCase())) {
+        var banRequest = {
+            PlayFabId: currentPlayerId,
+            Reason: "BAD NAME. DISCORD.GG/reeltaggers",
+            DurationInHours: 6
+        };
+        server.BanUsers({ Bans: [banRequest] });
+    }
+
+    if (displayName.length == 0 && displayName > 12) {
+        server.BanUsers({ 
+            Bans:({
+            PlayFabId: currentPlayerId,
+            Reason: "CHEATING. INVALID NAME. DISCORD.GG/REELTAGGERS",
+            DurationInHours: 0
+            })
+        });
+    }
+}
+
+handlers.AntiPCVR = function(args, context) {
+    var ps = context.playStreamEvent;
+    var dm = ps.DeviceInfo.DeviceModel;
+    var pf = ps.DeviceInfo.Platform;
+    var dt = ps.DeviceInfo.DeviceType;
+    var pn = ps.DeviceInfo.ProductBundle;
+    var id = context.playerProfile.PlayerId;
+    var cidd = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    }).UserInfo.CustomIdInfo.CustomId;
+
+    if (dm == "Oculus Quest") {
+        if (pf == "Android") {
+            if (dt == "Handheld") {
+                log.debug("hi normal feller")
+            } else {
+                server.BanUsers({
+                    Bans: ({
+                        PlayFabId: currentPlayerId,
+                        IPAddress: 0,
+                        DurationInHours: 0,
+                        Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/REELTAGGERS."
+                    })
+                });
+                server.DeletePlayer({PlayFabId: currentPlayerId});
+            }
+        } else {
+            server.BanUsers({
+                Bans: ({
+                    PlayFabId: currentPlayerId,
+                    IPAddress: 0,
+                    DurationInHours: 0,
+                    Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/REELTAGGERS."
+                })
+            });
+            server.DeletePlayer({PlayFabId: currentPlayerId});
+        }
+    } else {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/REELTAGGERS."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+    if (pn == null) {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/REELTAGGERS."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+    if (dm == null) {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/REELTAGGERS."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+    if (pf == null) {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/REELTAGGERS."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+    if (dt == null) {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/REELTAGGERS."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+ 
+    if (pn != "com.ApeOlympics.ApeGameTag" && pn != "com.Funkey.Gtag") {
+        var contentBody = {
+        "content": "",
+        "embeds": [{
+            "title": "**PRIVATE APPLAB OR PCVR DETECTED!**",
+            "color": 16711680,
+            "fields": [{
+                    "name": "PLAYER DETAILS",
+                    "value": "
+CUSTOM ID: " + cidd + "
+PLAYER ID: " + id + "
+PACKAGE NAME: (WILL ONLY SHOW UP IF IT IS A PRIVATE APPLAB) " + pb
+                }
+            ]
+        }],
+        "attachments": []
+    }
+        
+        var url = "https://discord.com/api/webhooks/1256013972516372651/VnCFGzJ6PbvOaNOTJ4q3A-NZZCg864FJBkbYygFNufi8Wos3osLe4Wafb2ysx2_6Q3je";
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING PCVR OR PRIVATE APPLAB. DISCORD.GG/REELTAGGERS."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+};
+
+handlers.CheckForVPN = function(args, context) {
+    const ps = context.playStreamEvent;
+    const ip = ps["IPV4Address"];
+    const apiUrl = `http://ip-api.com/json/${ip}?fields=16974336`;
+
+    try {
+        const response = http.request(apiUrl, "GET", JSON.stringify({}), "application/json", {});
+        
+        if (response) {
+            const responseJson = JSON.parse(response);
+
+            if (responseJson["proxy"] === true || responseJson["hosting"] === true) {
+                banAndDeletePlayer(currentPlayerId, ip);
+            }
+        } else {
+            log.error("Failed to check IP address for VPN/proxy.");
+        }
+    } catch (error) {
+        log.error("Error checking IP address for VPN/proxy:", error);
+    }
+};
+function banAndDeletePlayer(playFabId, ipAddress) {
+    server.BanUsers({
+        Bans: [{
+            PlayFabId: playFabId,
+            IPAddress: ipAddress,
+            DurationInHours: 24,
+            Reason: "USING A VPN!"
+        }]
+    });
+
+    server.DeletePlayer({ PlayFabId: playFabId });
+}
+
+handlers.BanMeNew = function(args) {
+	var Name = args.Name;
+	var result = server.BanUsers({
+		Bans: [{
+			PlayFabId: currentPlayerId,
+			DurationInHours:12,
+			Reason: "BANNED FOR THE NAME: " + Name + "
+PLEASE CHOOSE A BETTER NAME!"
+		}]
+	});
+}
+handlers.BanMe = function(args) {
+    var result = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    });
+     server.BanUsers({
+         Bans:[{
+         PlayFabId:currentPlayerId,
+         DurationInHours:12,
+         Reason:"BAD NAME DETECTED! PLEASE DON'T PUT YOUR NAMES AS ANYTHING BAD"
+     }]})
+}
+
+
+handlers.PlayFabIDAuth = function(args, context) {
+    const userInfo = server.GetUserAccountInfo({ PlayFabId: currentPlayerId }).UserInfo;
+    const cid = userInfo.CustomIdInfo && userInfo.CustomIdInfo.CustomId;
+    const id = context.playerProfile.PlayerId;
+
+    const nonce = args && args.Nonce || null;
+    const ocid = args && args.OculusId || null;
+
+    function msg(title, description) {
+        const contentBody = {
+            "content": null,
+            "embeds": [
+                {
+                    "title": null,
+                    "color": 16711680,
+                    "author": { "name": title },
+                    "description": description
+                }
+            ],
+            "attachments": []
+        };
+
+        const url = "https://discord.com/api/webhooks/1255310938974978048/Y8gzodJR8pDBWP3VEEk20byjqCGcpbzkhxFqRzgLHUuS10eHFE0lA51kvafM-f2dicdF";
+        const method = "post";
+        const contentType = "application/json";
+        const headers = {};
+        http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+    }
+
+    function banAndDeletePlayer(reason) {
+        server.BanUsers({
+            Bans: [{
+                DurationInHours: 0,
+                IPAddress: 0,
+                PlayFabId: currentPlayerId,
+                Reason: reason
+            }]
+        });
+        server.DeletePlayer({ PlayFabId: currentPlayerId });
+    }
+
+    if (cid && cid.startsWith("OCULUS")) {
+        const orgscope = cid.substring(6);
+        if (orgscope.length === 16 || orgscope.length === 17) {
+            const contentBody = {
+                "content": "",
+                "embeds": [{
+                    "title": "**PLAYER AUTHED!**",
+                    "color": 255255,
+                    "fields": [{
+                        "name": "PLAYER DETAILS",
+                        "value": "CUSTOM ID: " + cid + "
+PLAYER ID: " + currentPlayerId
+                    }]
+                }],
+                "attachments": []
+            };
+            const url = "https://discord.com/api/webhooks/1255310938974978048/Y8gzodJR8pDBWP3VEEk20byjqCGcpbzkhxFqRzgLHUuS10eHFE0lA51kvafM-f2dicdF";
+            const method = "post";
+            const contentType = "application/json";
+            const headers = {};
+            http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        } else {
+            banAndDeletePlayer("CHEATING, INVALID CUSTOM ID.");
+        }
+    } else {
+        msg("INVALID CUSTOM ID FOUND!", "**USER ID:** " + currentPlayerId + "
+CUSTOMID:|| " + cid + "||");
+        banAndDeletePlayer("CHEATING, INVALID CUSTOM ID. discord.gg/gtag");
+    }
+
+    if (cid && !["22", "23"].includes(cid.length.toString())) {
+        msg("INVALID CUSTOM ID FOUND!", "**USER ID:** " + currentPlayerId + "
+CUSTOMID:|| " + cid + "||");
+        banAndDeletePlayer("CHEATING, INVALID CUSTOM ID.");
+    }
+
+    const validPrefixes = ["OCULUS1", "OCULUS2", "OCULUS3", "OCULUS4", "OCULUS5", "OCULUS6", "OCULUS7", "OCULUS8", "OCULUS9"];
+    if (!validPrefixes.some(prefix => cid.includes(prefix))) {
+        banAndDeletePlayer("CHEATING, INVALID CUSTOM ID discord.gg/gtag");
+    }
+
+    if (cid && cid.length < 22) {
+        banAndDeletePlayer("CHEATING, INVALID CUSTOM ID. discord.gg/gtag");
+    }
+
+    const invalidCharacters = ["-", "?", "!", "#", "@", "%", ")", "*", "&", "()", ")"];
+    if (id && invalidCharacters.includes(id)) {
+        msg("INVALID PLAYER ID FOUND!", "**USER ID:** " + currentPlayerId + "
+CUSTOMID:|| " + cid + "||");
+        banAndDeletePlayer("CHEATING, INVALID PLAYER ID.");
+    }
+// DONT REMOVE THIS IS FOR NONCE!
+    if (nonce) {
+        var url = "https://graph.oculus.com/user_nonce_validate?nonce=" + nonce + "&user_id=" + ocid + "&access_token=OC||";
+        var method = "post";
+        var contentBody = "";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = JSON.parse(http.request(url, method, contentBody, contentType, headers));
+
+        if (responseString["is_valid"] === true) {
+            return { "result": 0 };
+        } else {
+            url = "https://graph.oculus.com/user_nonce_validate?nonce=" + nonce + "&user_id=" + ocid + "&access_token=OC||";
+            responseString = JSON.parse(http.request(url, method, contentBody, contentType, headers));
+            
+            if (responseString["is_valid"] === true) {
+                return { "result": 0 };
+            } else {
+                return { "result": 3 };
+            }
+        }
+    } else {
+        return { "result": 1, "message": "Nonce is missing" };
+	server.BanUsers({
+               Bans: [{ PlayFabId: currentPlayerId, IPAddress: 0, Reason: "CHEATING. INVALID OCULUS ACCOUNT.", DurationInHours: 0 }]}); server.DeletePlayer({ PlayFabId: currentPlayerId });
+    }
+}
+
+
+handlers.TryDistributeCurrency = function(args, context) {
+    var playerId = currentPlayerId;
+    var userReadOnlyData = server.GetUserReadOnlyData({
+        PlayFabId: playerId,
+        Keys: ["DailyLogin", "Currency"]
+    });
+
+    var lastDailyLogin = userReadOnlyData.Data["DailyLogin"];
+    var today = new Date().toISOString().slice(0, 10);
+
+    if (!lastDailyLogin || lastDailyLogin.Value !== today) {
+        server.UpdateUserReadOnlyData({
+            PlayFabId: playerId,
+            Data: { "DailyLogin": today }
+        });
+
+        var currencyToAdd = 100;
+        server.AddUserVirtualCurrency({
+            PlayFabId: playerId,
+            VirtualCurrency: "SR",
+            Amount: currencyToAdd
+        });
+
+        return { result: "Success", message: "Daily currency added" };
+    } else {
+        return { result: "NoChange", message: "Daily currency already received today" };
+    }
+};
+
+handlers.OnPlayerBanned = function(args, context) {
+    var ps = context.playStreamEvent;
+    var banexpo = ps.BanExpiration;
+    var reason = ps.BanReason;
+    var id = context.playerProfile.PlayerId;
+    var cidd = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    }).UserInfo.CustomIdInfo.CustomId;
+    var contentBody = {
+        "content": "",
+        "embeds": [{
+            "title": "**PLAYER BANNED!**",
+            "color": 16711680,
+            "fields": [{
+                    "name": "BAN DETAILS",
+                    "value": "
+BAN EXPIRATION: " + banexpo + "
+BAN REASON: " + reason
+                },
+                {
+                    "name": "PLAYER DETAILS",
+                    "value": "CUSTOM ID: " + cidd + "
+PLAYER ID: " + currentPlayerId
+                }
+            ]
+        }],
+        "attachments": []
+    }
+        var url = "https://discord.com/api/webhooks/1259427489030340750/Vd0ej65R-qQogQGQfoN0_VcHA7uGuQ9viGfaCK3kLCIwMsMwMf-AoKdlcV-MFp5oCNwh";
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+}
+
+
+handlers.AntiLemonLoader = function(args, context) {
+    var result = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    });
+    var id = context.playerProfile.PlayerId;
+    var cidd = result.UserInfo.CustomIdInfo.CustomId;
+    
+    
+    var playerData = server.GetUserReadOnlyData({
+        PlayFabId: currentPlayerId,
+        Keys: ["androidDataPath", "PlayerName"]
+    });
+
+    var androidDataPath = playerData.Data["androidDataPath"]
+    var playerName = playerData.Data["PlayerName"] ? playerData.Data["PlayerName"].Value : null;
+
+
+    var lemonloader = ["/com.Funkey.Gtag/files/mods", "/com.Apeolympics.ApeGameTag/files/mods"];
+    
+    var banReason = "STOP CHEATING.";
+    var deletePlayer = false;
+    
+    if (lemonloader.includes(androidDataPath)) {
+        banReason = "CHEATING. USING A PRIVATE APPLAB. discord.gg/gtag";
+    var contentBody = {
+        "content": "",
+        "embeds": [{
+            "title": "**POSSIBLY PRIVATE APPLAB DETECTED!**",
+            "color": 16711680,
+            "fields": [{
+                    "name": "PLAYER DETAILS",
+                    "value": "
+CUSTOM ID: " + cidd + "
+PLAYER ID: " + id
+                }
+            ]
+        }],
+        "attachments": []
+    }
+        
+        var url = "https://discord.com/api/webhooks/1256013972516372651/VnCFGzJ6PbvOaNOTJ4q3A-NZZCg864FJBkbYygFNufi8Wos3osLe4Wafb2ysx2_6Q3je";
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        deletePlayer = true;
+}
+    if (deletePlayer) {
+        server.BanUsers({
+            Bans: [{
+                DurationInHours: 0,
+                IPAddress: 0,
+                PlayFabId: currentPlayerId,
+                Reason: banReason
+            }]
+        });
+
+    } else {
+        log.debug("Valid package name: " + androidDataPath);
+    }
+};
+
+
+
+handlers.UnbannableIDS = function(args) {
+    if (Unbannable.includes(currentPlayerId)) {
+        server.RevokeAllBansForUser({PlayFabId:currentPlayerId})
+    }
+    if (KindaHigherThenMod.includes(currentPlayerId)) {
+        server.RevokeAllBansForUser({PlayFabId:currentPlayerId})
+    }
+    if (Moderators.includes(currentPlayerId)) {
+        server.RevokeAllBansForUser({PlayFabId:currentPlayerId})
+    }
+}
+handlers.ConsumeOculusIAPWithLock = function(args, context) {
+    var accessToken = args.AccessToken;
+    userID = args.UserID;
+    var nonce = args.Nonce;
+    var platform = args.Platform;
+    var sku = args.SKU;
+    var debugParameters = args.DebugParameters;
+
+    return {
+        result: true
+    };
+};
+handlers.ConsumeOculusIAP = function(args) {
+	var accessToken = args.AccessToken;
+	UserID = args.UserID;
+	var nonce = args.Nonce;
+	var platform = args.Platform;
+	var sku = args.SKU;
+	var debugParameters = args.DebugParameters;
+
+	if (sku == "1000_shiny_rocks") {
+		var currenyResult = server.AddUserVirtualCurrency({
+			PlayFabId: currentPlayerId,
+			VirtualCurrency: "SR",
+			Amount: 1000
+		});
+	} else if (sku == "2200_shiny_rocks") {
+		var currenyResult = server.AddUserVirtualCurrency({
+			PlayFabId: currentPlayerId,
+			VirtualCurrency: "SR",
+			Amount: 2200
+		});
+	} else if (sku == "5000_shiny_rocks") {
+		var currenyResult = server.AddUserVirtualCurrency({
+			PlayFabId: currentPlayerId,
+			VirtualCurrency: "SR",
+			Amount: 5000
+		});
+	} else if (sku == "early_access_supporter_pack") {
+		var itemIds = ["ea pack"];
+		var itemResult = server.GrantItemsToUser({
+			ItemIds: itemIds,
+			PlayFabId: currentPlayerId,
+			CatalogVersion: "DLC"
+		})
+	}
+
+	return {
+		result: true
+	};
+};
+
+handlers.ReturnMyOculusHash = function(args) {
+    return {
+        "oculusHash": UserID + "." + currentPlayerId
+    };
+};
+
+handlers.ReturnCurrentVersion = function(args) {
+    return {"ResultCode":0, "BannedUsers":"2147483647", "MOTD":"<color=yellow>WELCOME TO REEL TAGGERS</color>
+<color=magenta></color>" + "
+
+<color=yellow>YOUR ID IS: " + currentPlayerId + "</color>
+
+<color=yellow>PAINTBRAWL22!</color>
+<color=magenta>CREDITS:REELMER,JRVR,DR3W,LELE</color>
+<color=red>https://discord.gg/reel-taggers-1234329349193469962</color>","Message":"live11127"}
+}
+
+handlers.ReturnCurrentVersionNew = function(args) {
+    return {"ResultCode":0, "BannedUsers":"2147483647", "MOTD":"<color=yellow>WELCOME TO REEL TAGGERS</color>
+<color=magenta></color>" + "
+
+<color=yellow>YOUR ID IS: " + currentPlayerId + "</color>
+
+<color=yellow>PAINTBRAWL22!</color>
+<color=magenta>CREDITS:REELMER,JRVR,DR3W,LELE</color>
+<color=red>https://discord.gg/reel-taggers-1234329349193469962</color>","Message":"live11127"}
+}
+
+
+
+function whatthatssocrazyirelateSOOOOOmuchhahahahahwoulddefinitlybustona3rdgraderhaahhahah(gameId, region) {
+    return gameId + region.toUpperCase();
+}
+
+function getinv(playerId) {
+    const inventory = server.GetUserInventory({ PlayFabId: playerId }).Inventory;
+    return inventory.map(item => item.ItemId).join("");
+}
+
+function ugh(sgd, playerId, actorNr, joecool) {
+    server.CreateSharedGroup({ SharedGroupId: sgd });
+    server.AddSharedGroupMembers({ PlayFabIds: [playerId], SharedGroupId: sgd });
+    server.UpdateSharedGroupData({ SharedGroupId: sgd, Data: { [actorNr]: joecool } });
+}
+
+function upd(playerId, joecool) {
+    server.UpdateUserData({
+        PlayFabId: playerId,
+        Data: { allowedCosmetics: joecool }
+    });
+}
+
+function hahahermwhatthesigmaikrighthahahahahihaveadeeploveforminerspleasehelpmeimdoingthisagainstmyownwill(sgd, userId, joecool) {
+    server.AddSharedGroupMembers({ PlayFabIds: [userId], SharedGroupId: sgd });
+    server.UpdateSharedGroupData({
+        SharedGroupId: sgd,
+        Data: { [userId]: joecool },
+        Permission: "Public"
+    });
+}
+
+function wpe(eventName, playerId) {
+    server.WritePlayerEvent({ EventName: eventName, PlayFabId: playerId });
+}
+
+function real(args, eventType) {
+    const contentBody = {
+        content: "",
+        embeds: [{
+            title: `**ROOM ${eventType.toUpperCase()}**`,
+            color: 255255,
+            fields: [
+                { name: "ROOM DETAILS", value: `ROOM ID: ${args.GameId}
+REGION: ${args.Region.toUpperCase()}` },
+                { name: "PLAYER DETAILS", value: `USERNAME: ${args.Nickname}
+PLAYER ID: ${currentPlayerId}` },
+                { name: "ARGS", value: `ARGS: ${JSON.stringify(args)}` }
+            ]
+        }],
+        attachments: []
+    };
+
+    const url = "https://discord.com/api/webhooks/1256013233396121721/cl_kiLxYh1RNpyvSVoAN6JL9VGfmxI2Yrc63-yDSYZj2BMuwn2UDbOrqn7NCT-VGcQEx";
+    const method = "post";
+    const contentType = "application/json";
+    const headers = {};
+    http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+}
+
+function log(args) {
+    const sgd = whatthatssocrazyirelateSOOOOOmuchhahahahahwoulddefinitlybustona3rdgraderhaahhahah(args.GameId, args.Region);
+    const joecool = getinv(currentPlayerId);
+    
+    if (args.ActorNr !== undefined) {
+        ugh(sgd, currentPlayerId, args.ActorNr, joecool);
+    }
+    
+    if (args.UserId !== undefined) {
+        hahahermwhatthesigmaikrighthahahahahihaveadeeploveforminerspleasehelpmeimdoingthisagainstmyownwill(sgd, args.UserId, joecool);
+    }
+    
+    upd(currentPlayerId, joecool);
+    real(args, args.EventName.toLowerCase());
+    wpe(`room_${args.EventName.toLowerCase()}`, currentPlayerId);
+}
+
+function ss(args) {
+    const sgd = whatthatssocrazyirelateSOOOOOmuchhahahahahwoulddefinitlybustona3rdgraderhaahhahah(args.GameId, args.Region);
+    
+    if (args.EventName === 'RoomLeft') {
+        server.UpdateSharedGroupData({ SharedGroupId: sgd, KeysToRemove: [args.ActorNr.toString()] });
+        server.RemoveSharedGroupMembers({ PlayFabIds: [currentPlayerId], SharedGroupId: sgd });
+    } else if (args.EventName === 'RoomClosed') {
+        server.DeleteSharedGroup({ SharedGroupId: sgd });
+    } else if (args.EventName === 'RoomJoined' || args.EventName === 'RoomCreated') {
+        const joecool = getinv(currentPlayerId);
+        ugh(sgd, currentPlayerId, args.ActorNr, joecool);
+    }
+}
+
+handlers.RoomJoined = function(args) {
+    args.EventName = 'RoomJoined';
+    log(args);
+    ss(args);
+};
+
+handlers.RoomCreated = function(args) {
+    args.EventName = 'RoomCreated';
+    log(args);
+    ss(args);
+};
+
+handlers.RoomLeft = function(args) {
+    args.EventName = 'RoomLeft';
+    log(args);
+    ss(args);
+};
+
+handlers.RoomClosed = function(args) {
+    args.EventName = 'RoomClosed';
+    log(args);
+    ss(args);
+};
+
+
+function ReportButtonNames(intButton) {
+    switch (intButton) {
+        case 0:
+            return "HATE SPEECH.";
+        case 1:
+            return "CHEATING.";
+        case 2:
+            return "TOXICITY.";
+        case 3:
+            return "CANCEL.";
+        default:
+            return "NOT ASSIGNED.";
+    }
+}
+
+handlers.RoomEventRaised = function (args) {
+    const joecool = server.GetUserInventory({ PlayFabId: args.UserId }).Inventory.map(item => item.ItemId).join("");
+    const sgdid = args.GameId + args.Region.toUpperCase();
+    const eventData = args.Data;
+
+    switch (args.EvCode) {
+        case 191:
+            banUser(args.UserId, "CHEATING. DISCORD.GG/GTAG");
+            break;
+        case 1:
+            try {
+                updateSharedGroupData(sgdid, { [args.Data[1]]: joecool });
+                updateSharedGroupData(sgdid, { [args.ActorNr]: joecool });
+            } catch (error) {
+                log.debug("User cosmetics / shared group data is already registered");
+            }
+            handleTaggingEvent(args, "rock monk");
+            break;
+        case 2:
+            handleTaggingEvent(args, "lava");
+            break;
+        case 8:
+            uhoh(args, sgdid);
+            break;
+        default:
+            log.debug(`Unhandled event code: ${args.EvCode}`);
+}
+
+function banUser(playFabId, reason) {
+    try {
+        server.BanUsers({
+            Bans: [{
+                PlayFabId: playFabId,
+                DurationInHours: 0,
+                Reason: reason
+            }]
+        });
+    } catch (error) {
+        log.error(`Failed to ban user ${playFabId}: ${error}`);
+    }
+}
+
+function updateSharedGroupData(sgdid, data) {
+    server.UpdateSharedGroupData({
+        SharedGroupId: sgdid,
+        Data: data,
+        Permission: "Public"
+    });
+}
+
+function handleTaggingEvent(args, type) {
+    const contentBody = {
+        "Tagger Username": args.Nickname,
+        "Times Tagged": 1,
+    };
+    const url = "https://thundertag.pythonanywhere.com";
+    const method = "post";
+    const contentType = "application/json";
+    const headers = {};
+
+    try {
+        const responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        const responseData = JSON.parse(responseString);
+
+        if (responseData.status === "success") {
+            server.AddUserVirtualCurrency({
+                PlayFabId: args.UserId,
+                VirtualCurrency: "SR",
+                Amount: 50
+            });
+        } else {
+            log.debug(`Failed to grant currency for ${type} event: ${responseData.message}`);
+        }
+    } catch (error) {
+        log.error(`Error handling ${type} event: ${error}`);
+    }
+}
+
+function uhoh(args, sharedGroupId) {
+    const sgd = server.GetSharedGroupData({ SharedGroupId: sgdid, GetMembers: true });
+
+    if (CheatReasons.includes(args.Data[5])) {
+        server.WritePlayerEvent({ EventName: "anticheat", PlayFabId: args.UserId });
+
+        const contentBody = {
+            content: "",
+            embeds: [{
+                title: "**ANTI CHEAT SET-OFF**",
+                color: 7340287,
+                fields: [
+                    { name: "ROOM DETAILS", value: args.Data[0] },
+                    { name: "PLAYER DETAILS", value: `USERNAME: ${args.Data[4]}
+PLAYER ID: ${args.Data[3]}` },
+                    { name: "REASON", value: args.Data[5] },
+                    { name: "OTHER DATA", value: `VICTIM ID: ${args.UserId}
+GAME VERSION: ${args.Data[6]}
+MASTERCLIENT ID: ${args.Data[2]}` }
+                ]
+            }],
+            attachments: []
+        };
+        const webhookUrl = "https://discord.com/api/webhooks/1261314226421633024/CfsLGMr5pv7XNR1qKEqDLIt9uiezWGZZZBQ6OiQvIPepNPcIVhf6hpdJAT5vNJrZrYKO";
+
+        try {
+            http.request(webhookUrl, "POST", JSON.stringify(contentBody), "application/json", {});
+            log.debug("Successfully sent to webhook.");
+        } catch (error) {
+            log.debug("Failed to send to webhook: " + error);
+        }
+    if (CheatReasons.includes(args.Data[5])) {
+        banUser(args.Data[3], `ANTICHEAT TRIGGERED. REASON: ${args.Data[5]} IF THIS WAS A MISTAKE PLEASE JOIN THE DISCORD. DISCORD.GG/GTAG ID: ${args.Data[3]}`);
+        }
+    }
+}
+
+if (args.EvCode == 50) {
+
+        {
+        
+        const ReportedPlayerId = eventData[0];
+
+ var contentBody = {
+        "content": "",
+        "embeds": [{
+            "title": "**PLAYER REPORTED**",
+            "color": 7340287,
+            "fields": [{
+                    "name": "REPORT DETAILS",
+                    "value": "ROOM ID: " + args.GameId + "
+REASON: " + ReportButtonNames(args.Data[1])
+                },
+                {
+                    "name": "REPORTED DETAILS",
+                    "value": "USERNAME: " + args.Data[2] + "
+PLAYER ID: " + ReportedPlayerId
+                },
+
+                {
+                    "name": "REPORTER DETAILS",
+                    "value": "USERNAME: " + args.Nickname + "
+PLAYER ID : " + currentPlayerId
+                }
+            ]
+        }],
+        "attachments": []
+    }
+            var url = "https://discord.com/api/webhooks/1256013817343774821/NpT3cfdBdXzJiXK_QfG1jNtMmGtOUHVnV7qDvaYU_jxldkYriBS1CjGCUwlFe0gQ8QkA";
+            var method = "post";
+            var contentType = "application/json";
+            var headers = {};
+            var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        }
+        if(InstaKick.includes(currentPlayerId)) {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: args.Data[0],
+                    DurationInHours: 1,
+                    Reason: "ban"
+                }]
+            });
+            server.RevokeAllBansForUser({PlayFabId:ReportedPlayerId})
+        }
+            
+        if (KindaHigherThenMod.includes(currentPlayerId)) 
+        {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: args.Data[0],
+                    DurationInHours: 72,
+                    Reason: "BANNED FOR 72 HOURS BY: " + args.Nickname + " FOR: " + ReportButtonNames(args.Data[1]) + "
+ DISCORD.GG/GTAG 
+ ID: " + args.Data[0]
+                }]
+            });
+           
+               var contentBody = {
+        "content": "",
+        "embeds": [{
+            "title": "**STAFF REPORTED**",
+            "color": 7340287,
+            "fields": [{
+                    "name": "REPORT DETAILS",
+                    "value": "ROOM ID: " + args.GameId + "
+REASON: " + ReportButtonNames(args.Data[1])
+                },
+                {
+                    "name": "REPORTED DETAILS",
+                    "value": "USERNAME: " + args.Data[2] + "
+PLAYER ID: " + ReportedPlayerId
+                },
+
+                {
+                    "name": "REPORTER DETAILS",
+                    "value": "USERNAME: " + args.Nickname + "
+PLAYER ID : " + currentPlayerId
+                }
+            ]
+        }],
+        "attachments": []
+    }
+            var url = "https://discord.com/api/webhooks/1256013817343774821/NpT3cfdBdXzJiXK_QfG1jNtMmGtOUHVnV7qDvaYU_jxldkYriBS1CjGCUwlFe0gQ8QkA";
+            var method = "post";
+            var contentType = "application/json";
+            var headers = {};
+            var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        }
+        
+
+                
+        if (Tmods.includes(currentPlayerId)) 
+        {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: args.Data[0],
+                    DurationInHours: 1,
+                    Reason: "BANNED FOR 1 HOUR BY: " + args.Nickname + " FOR: " + ReportButtonNames(args.Data[1]) + "
+ DISCORD.GG/GTAG 
+ ID: " + args.Data[0]
+                }]
+            });
+           
+               var contentBody = {
+        "content": "",
+        "embeds": [{
+            "title": "**STAFF REPORTED**",
+            "color": 7340287,
+            "fields": [{
+                    "name": "REPORT DETAILS",
+                    "value": "ROOM ID: " + args.GameId + "
+REASON: " + ReportButtonNames(args.Data[1])
+                },
+                {
+                    "name": "REPORTED DETAILS",
+                    "value": "USERNAME: " + args.Data[2] + "
+PLAYER ID: " + ReportedPlayerId
+                },
+
+                {
+                    "name": "REPORTER DETAILS",
+                    "value": "USERNAME: " + args.Nickname + "
+PLAYER ID : " + currentPlayerId
+                }
+            ]
+        }],
+        "attachments": []
+    }
+            var url = "https://discord.com/api/webhooks/1256013817343774821/NpT3cfdBdXzJiXK_QfG1jNtMmGtOUHVnV7qDvaYU_jxldkYriBS1CjGCUwlFe0gQ8QkA";
+            var method = "post";
+            var contentType = "application/json";
+            var headers = {};
+            var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        }
+
+        if (Moderators.includes(currentPlayerId)) {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: args.Data[0],
+                    DurationInHours: 48,
+                    Reason: "BANNED FOR 48 HOURS BY: " + args.Nickname + " FOR: " + ReportButtonNames(args.Data[1]) + "
+ DISCORD.GG/GTAG 
+ ID: " + args.Data[0]
+                }]
+            });
+               var contentBody = {
+        "content": "",
+        "embeds": [{
+            "title": "**STAFF REPORTED**",
+            "color": 7340287,
+            "fields": [{
+                    "name": "REPORT DETAILS",
+                    "value": "ROOM ID: " + args.GameId + "
+REASON: " + ReportButtonNames(args.Data[1])
+                },
+                {
+                    "name": "REPORTED DETAILS",
+                    "value": "USERNAME: " + args.Data[2] + "
+PLAYER ID: " + ReportedPlayerId
+                },
+
+                {
+                    "name": "REPORTER DETAILS",
+                    "value": "USERNAME: " + args.Nickname + "
+PLAYER ID : " + currentPlayerId
+                }
+            ]
+        }],
+        "attachments": []
+    }
+            var url = "https://discord.com/api/webhooks/1256013817343774821/NpT3cfdBdXzJiXK_QfG1jNtMmGtOUHVnV7qDvaYU_jxldkYriBS1CjGCUwlFe0gQ8QkA";
+            var method = "post";
+            var contentType = "application/json";
+            var headers = {};
+            var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        }
+        
+         if (Huh.includes(currentPlayerId)) 
+        {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: args.Data[0],
+                    DurationInHours: 144,
+                    Reason: "BANNED FOR 144 HOURS BY: " + args.Nickname + " FOR: " + ReportButtonNames(args.Data[1]) + "
+ DISCORD.GG/GTAG 
+ ID: " + args.Data[0]
+                }]
+            });
+           
+    var contentBody = {
+        "content": "",
+        "embeds": [{
+            "title": "**STAFF REPORTED**",
+            "color": 7340287,
+            "fields": [{
+                    "name": "REPORT DETAILS",
+                    "value": "ROOM ID: " + args.GameId + "
+REASON: " + ReportButtonNames(args.Data[1])
+                },
+                {
+                    "name": "REPORTED DETAILS",
+                    "value": "USERNAME: " + args.Data[2] + "
+PLAYER ID: " + ReportedPlayerId
+                },
+
+                {
+                    "name": "REPORTER DETAILS",
+                    "value": "USERNAME: " + args.Nickname + "
+PLAYER ID : " + currentPlayerId
+                }
+            ]
+        }],
+        "attachments": []
+    }
+            var url = "https://discord.com/api/webhooks/1256013817343774821/NpT3cfdBdXzJiXK_QfG1jNtMmGtOUHVnV7qDvaYU_jxldkYriBS1CjGCUwlFe0gQ8QkA";
+            var method = "post";
+            var contentType = "application/json";
+            var headers = {};
+            var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        }
+
+        if (KindaHigherThenMod.includes(ReportedPlayerId)) {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: currentPlayerId,
+                    DurationInHours: 1,
+                    Reason: "BANNED FOR REPORTING A MODERATOR DISCORD.GG/REELTAGGERS"
+                }]
+            });
+        }
+
+        if (Moderators.includes(ReportedPlayerId)) {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: currentPlayerId,
+                    DurationInHours: 1,
+                    Reason: "BANNED FOR REPORTING A MODERATOR DISCORD.GG/REELTAGGERS"
+                }]
+            });
+        }
+
+        if (Huh.includes(ReportedPlayerId)) {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: currentPlayerId,
+                    DurationInHours: 1,
+                    Reason: "BANNED FOR REPORTING A MODERATOR DISCORD.GG/REELTAGGERS"
+                }]
+            });
+        }
+        server.WritePlayerEvent({EventName: "reported_by_player", PlayFabId:currentPlayerId})
+        server.WritePlayerEvent({EventName: "reported_player", PlayFabId: ReportedPlayerId})
+        
+    }
+    
+    if (args.EvCode == 9) 
+    {
+        server.UpdateSharedGroupData({SharedGroupId: args.GameId + args.Region.toUpperCase(), Data : {[args.ActorNr] : joecool}})
+    }
+};

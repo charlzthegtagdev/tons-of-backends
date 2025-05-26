@@ -1,0 +1,125 @@
+handlers.AntiPCVR = function(args, context) {
+    var ps = context.playStreamEvent;
+    var dm = ps.DeviceInfo.DeviceModel;
+    var pf = ps.DeviceInfo.Platform;
+    var dt = ps.DeviceInfo.DeviceType;
+    var pn = ps.DeviceInfo.ProductBundle;
+    var id = context.playerProfile.PlayerId;
+    var cidd = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    }).UserInfo.CustomIdInfo.CustomId;
+
+    if (dm == "Oculus Quest") {
+        if (pf == "Android") {
+            if (dt == "Handheld") {
+                log.debug("hi normal feller")
+            } else {
+                server.BanUsers({
+                    Bans: ({
+                        PlayFabId: currentPlayerId,
+                        IPAddress: 0,
+                        DurationInHours: 0,
+                        Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/GTAG."
+                    })
+                });
+                server.DeletePlayer({PlayFabId: currentPlayerId});
+            }
+        } else {
+            server.BanUsers({
+                Bans: ({
+                    PlayFabId: currentPlayerId,
+                    IPAddress: 0,
+                    DurationInHours: 0,
+                    Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/GTAG."
+                })
+            });
+            server.DeletePlayer({PlayFabId: currentPlayerId});
+        }
+    } else {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/GTAG."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+    if (pn == null) {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/GTAG."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+    if (dm == null) {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/GTAG."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+    if (pf == null) {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/GTAG."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+    if (dt == null) {
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING AN INVALID DEVICE TYPE. DISCORD.GG/GTAG."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+ 
+    if (pn != "com.zzstudios.projectlucky" && pn != "com.zzstudios.projectlucky") {
+        var contentBody = {
+        "content": "",
+        "embeds": [{
+            "title": "**PRIVATE APPLAB OR PCVR DETECTED!**",
+            "color": 16711680,
+            "fields": [{
+                    "name": "PLAYER DETAILS",
+                    "value": "\nCUSTOM ID: " + cidd + "\nPLAYER ID: " + id + "\nPACKAGE NAME: (WILL ONLY SHOW UP IF IT IS A PRIVATE APPLAB) " + pb
+                }
+            ]
+        }],
+        "attachments": []
+    }
+        
+        var url = "";
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+        server.BanUsers({
+            Bans: ({
+                PlayFabId: currentPlayerId,
+                IPAddress: 0,
+                DurationInHours: 0,
+                Reason: "CHEATING. USING PCVR OR PRIVATE APPLAB. DISCORD.GG/GTAG."
+            })
+        });
+        server.DeletePlayer({PlayFabId: currentPlayerId});
+    }
+}

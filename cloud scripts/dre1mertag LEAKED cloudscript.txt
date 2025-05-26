@@ -1,0 +1,1433 @@
+const CheatReasons = [ // DRE1MER TAG CLOUDSCRIPT)
+
+    "trying to inappropriately create game managers",
+
+    "inappropriate tag data being sent",
+
+    "room host force changed",
+
+    "trying to create multiple game managers",
+
+    "possible kick attempt",
+
+    "gorvity bisdabled",
+
+    //"inappropriate tag data being sent creating multiple vrrigs",
+
+]
+
+ 
+
+const Masters = [
+
+   "", //dre1mer
+
+   "", //brody(monkey taggers)
+
+   "", //brody(gorilla taggers)
+
+   "6C338542420AE31F", //Polar
+
+]
+
+ 
+
+const Admins = [
+
+    "E04E1C5E91E20D4E", //tyler
+
+    "", //p4rkr
+
+    "4230AE9CC8AF2116", // star
+
+    "", //entity_b
+
+    "AF6AA14EF589FB8D", //desire
+
+    "FAC0EEFE198F240F",//drexxy
+
+]
+
+ 
+
+const TrustedUsers = [
+
+    "", // arctic
+
+    //"", // polar
+
+    "", //batman
+
+    ]
+
+    
+
+const Moderators = [
+
+    "", //cowboy
+
+   "", //arctic
+
+    "C75B40F4902463FA", // zzentx
+
+    "AC369B8EE97B5B1F", //dex
+
+    "B077ADC016E3CF87", //downsyndrome
+
+    "", //ppman
+
+    "", //scoot
+
+    "A3E63E27C1A215CE", //GarrisonClipz
+
+    "", //depsi
+
+    "", //mas
+
+    "C0492DDD177402B3", //flame
+
+    "69BDAA8218FA4D11", //pixel
+
+    "CE6246D61F9C3EAC" //kyler
+
+]
+
+ 
+
+const Trackied = {
+
+    '' : "**POLAR (OWNER)**",
+
+    '': '***DRE1MER (OWNER)***',
+
+    '': 'SCARLETT (MOD)',
+
+    'FAC0EEFE198F240F':'DREXXY (MOD)',
+
+    '': 'ARCTIC (MOD)',
+
+    'C75B40F4902463FA':'ZZENTX (TRIAL MOD)',
+
+    '4230AE9CC8AF2116':'STAR (HEAD MOD)',
+
+    '':'KOLTEN (MOD)',
+
+    '':'SCOOT (MOD)',
+
+     'AC369B8EE97B5B1F':'DEX (TRIAL MOD)',
+
+     '':'COWBOY (TRIAL MOD)',
+
+     ' ':'SCREAMINGCAT (TRIAL MOD)',
+
+     '':'PPMAN (TRIAL MOD)',
+
+     'B077ADC016E3CF87':'DOWNSYNDROME (TRIAL MOD)',
+
+     'A3E63E27C1A215CE':'GARRISONCLIPZ (MOD)',
+
+     'AF6AA14EF589FB8D':'DESIRE (HEAD ADMIN)',
+
+     '':'P4RKR (HEAD ADMIN)',
+
+     'E04E1C5E91E20D4E':'TYLER (HEAD ADMIN)',
+
+     '':'BRODY (COMMUNITY MANAGER)',
+
+     '':'DEPSI (TRIAL MOD)',
+
+     '':'MAS (HEAD MOD)',
+
+     'C0492DDD177402B3' : 'FLAME (TRIAL MOD)',
+
+     '69BDAA8218FA4D11' : 'PIXEL (TRIAL MOD)',
+
+     '' : 'BATMAN (TRUSTED PLAYER)',
+
+     'CE6246D61F9C3EAC' : 'KYLER (TRIAL MOD)'
+
+}
+
+ 
+
+ 
+
+const BadNames = [
+
+  "KKK",
+
+  "PENIS",
+
+  "NIGG",
+
+  "NEG",
+
+  "NIGA",
+
+  "MONKEYSLAVE",
+
+  "SLAVE",
+
+  "FAG",
+
+  "NAGGI",
+
+  "TRANNY",
+
+  "QUEER",
+
+  "KYS",
+
+  "DICK",
+
+  "PUSSY",
+
+  "VAGINA",
+
+  "BIGBLACKCOCK",
+
+  "DILDO",
+
+  "HITLER",
+
+  "KKX",
+
+  "XKK",
+
+  "NIGA",
+
+  "NIGE",
+
+  "NIG",
+
+  "NI6",
+
+  "PORN",
+
+  "JEW",
+
+  "JAXX",
+
+  "TTTPIG",
+
+  "SEX",
+
+  "COCK",
+
+  "CUM",
+
+  "FUCK",
+
+  "PENIS",
+
+  "DICK",
+
+  "ELLIOT",
+
+  "JMAN",
+
+  "K9",
+
+  "NIGGA",
+
+  "TTTPIG",
+
+  "CRE1MER",
+
+  "NICKER",
+
+  "NICKA",
+
+  "REEL",
+
+  "NII",
+
+  "VMT",
+
+  "PPPTIG",
+
+  "KOSHER",
+
+  "NOXIDE",
+
+  "BEES",
+
+  "BEE",
+
+  "BEEZ",
+
+  "BEEEZ",
+
+  "64KOSHER64",
+
+  "K0SHER",
+
+  "N0XIDE",
+
+  "JMAN",
+
+  "PPPTIG",
+
+  "CLEANINGBOT",
+
+  "JANITOR",
+
+  "K9",
+
+  "H4PKY",
+
+  "MOSA",
+
+  "NIGGER",
+
+  "NIGGA",
+
+  "RONXYOSHIHATENIGGERSGIVEUSSTICK",
+
+  "@everyone"
+
+];
+
+ 
+
+ 
+
+ 
+
+ 
+
+handlers.ReturnCurrentVersion = function(args) {
+
+    const motd = "<color=orange>WELCOME TO DRE1MER TAG X PROJECT CRYPT X PROJECT THROWBACK</color>\n<color=magenta>.GG/DRE1MERTAG</color>" + "\n\n<color=yellow>YOUR ID IS: " + currentPlayerId + "</color>\n\n<color=yellow>VALENTINES 22 UPDATE!</color>\n<color=magenta>CREDITS: REZ, DRE1MER, POLAR</color>\n<color=red>DRE1MER TAG X CRYPT X THROWBACK</color>";
+
+    return {ResultCode: 0,BannedUsers: server.GetTitleData({}).Data.bannedusers,MOTD: motd.toString(), Message : live2114};
+
+}
+
+ 
+
+handlers.ReturnCurrentVersionNew = function(args) {
+
+    const motd = "<color=orange>WELCOME TO DRE1MER TAG X PROJECT CRYPT X PROJECT THROWBACK</color>\n<color=magenta>.GG/DRE1MERTAG</color>" + "\n\n<color=yellow>YOUR ID IS: " + currentPlayerId + "</color>\n\n<color=yellow>VALENTINES 22 UPDATE!</color>\n<color=magenta>CREDITS: REZ, DRE1MER, POLAR</color>\n<color=red>DRE1MER TAG X CRYPT X THROWBACK</color>";
+
+    return {ResultCode: 0,BannedUsers: server.GetTitleData({}).Data.bannedusers,MOTD: motd.toString()};
+
+}
+
+ 
+
+ 
+
+handlers.RoomCreated = function (args) {
+
+    let concatItems = "";
+
+    var Inventory = server.GetUserInventory({PlayFabId:currentPlayerId}).Inventory;
+
+    for (var i in Inventory) { concatItems += Inventory[i].ItemId }
+
+    server.CreateSharedGroup({SharedGroupId: args.GameId + args.Region.toUpperCase()})
+
+    server.AddSharedGroupMembers({PlayFabIds:currentPlayerId, SharedGroupId: args.GameId + args.Region.toUpperCase()})
+
+    server.UpdateSharedGroupData({SharedGroupId: args.GameId + args.Region.toUpperCase(), Data : {[args.ActorNr] : concatItems}})
+
+    server.WritePlayerEvent({EventName: "room_created", PlayFabId : currentPlayerId})
+
+    return { ResultCode : 0, Message: 'Success', "Cosmetics" : concatItems };
+
+};
+
+ 
+
+handlers.VerifyDeviceInfofrfrmoneyemoji = function(args, context) {
+
+    var psEvent = context.playStreamEvent;
+
+    var model = psEvent["DeviceInfo"]["DeviceModel"];
+
+    var platt = psEvent["DeviceInfo"]["Platform"];
+
+    var devicetypee = psEvent["DeviceInfo"]["DeviceType"];
+
+ 
+
+    if (model.includes("Quest")) {
+
+        if (platt.includes("Android")) {
+
+            if (devicetypee.includes("Handheld")) {
+
+                server.UpdateUserInternalData({Data:{"Verified" : "true"}, PlayFabId: currentPlayerId});
+
+                log.debug("Verified Oculus Quest User");
+
+            } else {
+
+                var result = server.BanUsers({
+
+                    Bans: [
+
+                        {
+
+                            PlayFabId: currentPlayerId,
+
+                            DurationInHours: 336,
+
+                            Reason: "CHEATING."
+
+                        }
+
+                    ]
+
+                });
+
+                log.debug("Invalid Oculus Quest User");
+
+            }
+
+        } else {
+
+            var result = server.BanUsers({
+
+                Bans: [
+
+                    {
+
+                        PlayFabId: currentPlayerId,
+
+                        DurationInHours: 336,
+
+                        Reason: "CHEATING."
+
+                    }
+
+                ]
+
+            });
+
+            log.debug("Invalid Oculus Quest User");
+
+        }
+
+    } else {
+
+        var result = server.BanUsers({
+
+            Bans: [
+
+                {
+
+                    PlayFabId: currentPlayerId,
+
+                    DurationInHours: 336,
+
+                    Reason: "CHEATING."
+
+                }
+
+            ]
+
+        });
+
+        log.debug("Invalid Oculus Quest User");
+
+    }
+
+};
+
+ 
+
+ 
+
+handlers.OnPhotonAuth = function(args) {
+
+    if (server.GetUserInternalData({PlayFabId:currentPlayerId}).Data["Verified"] == null)
+
+    {
+
+        
+
+        var result = server.BanUsers({
+
+        Bans: [
+
+            {
+
+                PlayFabId: currentPlayerId,
+
+                DurationInHours: 24,
+
+                Reason: "CHEATING."
+
+            }
+
+        ]
+
+     });
+
+     
+
+        headers = {}
+
+            contentBody = {
+
+                "content" : "<@1147769601543913482>",
+
+                "embeds": [
+
+                    {
+
+                        "title": "No Device Info FOund",
+
+                        "description": "**USER ID: **" + currentPlayerId + "\nUnverified",
+
+                        "color": "16776960"
+
+                    }
+
+                ]
+
+            }
+
+ 
+
+            var response = http.request("",
+
+            "POST", JSON.stringify(contentBody),
+
+            "application/json",
+
+            headers)
+
+            
+
+        
+
+    }
+
+}
+
+ 
+
+handlers.RoomJoined = function (args) {
+
+    let concatItems = "";
+
+    var Inventory = server.GetUserInventory({PlayFabId:currentPlayerId}).Inventory;
+
+    for (var i in Inventory) { concatItems += Inventory[i].ItemId }
+
+    server.AddSharedGroupMembers({PlayFabIds:currentPlayerId, SharedGroupId: args.GameId + args.Region.toUpperCase()})
+
+    server.UpdateSharedGroupData({SharedGroupId: args.GameId + args.Region.toUpperCase(), Data : {[args.ActorNr] : concatItems}})
+
+    server.WritePlayerEvent({EventName: "room_joined", PlayFabId : currentPlayerId})
+
+    var contentBody = {
+
+        "content": "",
+
+        "embeds": [{
+
+            "title": "**PHOTON ROOM JOINED**",
+
+            "color": 7340287,
+
+            "fields": [{
+
+                    "name": "ROOM DETAILS",
+
+                    "value": "ROOM ID: " + args.GameId + "\nREGION: " + args.Region.toUpperCase()
+
+                },
+
+                {
+
+                    "name": "PLAYER DETAILS",
+
+                    "value": "USERNAME: " + args.Nickname + "\nPLAYER ID: " + currentPlayerId
+
+                },
+
+                {
+
+                    "name": "ARGS",
+
+                    "value": "ARGS: " + JSON.stringify(args)
+
+                }
+
+            ]
+
+        }],
+
+        "attachments": []
+
+    }
+
+    var url = "";
+
+    var method = "post";
+
+    var contentType = "application/json";
+
+    var headers = {};
+
+    var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+    
+
+    return { ResultCode : 0, Message: 'Success' };
+
+};
+
+ 
+
+ 
+
+handlers.RoomLeft = function (args) {
+
+    server.UpdateSharedGroupData({SharedGroupId: args.GameId + args.Region.toUpperCase(), KeysToRemove: [args.ActorNr.toString()]})
+
+    server.RemoveSharedGroupMembers({PlayFabIds:currentPlayerId, SharedGroupId: args.GameId + args.Region.toUpperCase()})
+
+    server.WritePlayerEvent({EventName: "room_left", PlayFabId : currentPlayerId})
+
+        var contentBody = {
+
+        "content": "",
+
+        "embeds": [{
+
+            "title": "**PHOTON ROOM LEFT**",
+
+            "color": 7340287,
+
+            "fields": [{
+
+                    "name": "ROOM DETAILS",
+
+                    "value": "ROOM ID: " + args.GameId + "\nREGION: " + args.Region.toUpperCase()
+
+                },
+
+                {
+
+                    "name": "PLAYER DETAILS",
+
+                    "value": "USERNAME: " + args.Nickname + "\nPLAYER ID: " + currentPlayerId
+
+                },
+
+                {
+
+                    "name": "ARGS",
+
+                    "value": "ARGS: " + JSON.stringify(args)
+
+                }
+
+            ]
+
+        }],
+
+        "attachments": []
+
+    }
+
+    var url = "";
+
+    var method = "post";
+
+    var contentType = "application/json";
+
+    var headers = {};
+
+    var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+    return { ResultCode : 0, Message: 'Success' };
+
+};
+
+ 
+
+ 
+
+handlers.RoomClosed = function (args) {
+
+    server.DeleteSharedGroup({SharedGroupId:args.GameId + args.Region.toUpperCase()})
+
+    server.WritePlayerEvent({EventName: "room_closed", PlayFabId : currentPlayerId})
+
+    return { ResultCode : 0, Message: 'Success' };
+
+};
+
+ 
+
+ 
+
+handlers.RoomPropertyUpdated = function (args) {
+
+    
+
+    
+
+    var contentBody = {
+
+        "content": "",
+
+        "embeds": [{
+
+            "title": "**PHOTON ROOM PROP UPDATED**",
+
+            "color": 7340287,
+
+            "fields": [{
+
+                    "name": "ROOM DETAILS",
+
+                    "value": "ROOM ID: " + args.GameId + "\nREGION: " + args.Region.toUpperCase()
+
+                },
+
+                {
+
+                    "name": "PLAYER DETAILS",
+
+                    "value": "USERNAME: " + args.Nickname + "\nPLAYER ID: " + currentPlayerId
+
+                },
+
+                {
+
+                    "name": "ARGS",
+
+                    "value": "ARGS: " + JSON.stringify(args)
+
+                }
+
+            ]
+
+        }],
+
+        "attachments": []
+
+    }
+
+    var url = "";
+
+    var method = "post";
+
+    var contentType = "application/json";
+
+    var headers = {};
+
+    var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+    if ("248" in args.Properties) {
+
+     var result = server.BanUsers({
+
+        Bans: [
+
+            {
+
+                PlayFabId: currentPlayerId,
+
+                DurationInHours: 672,
+
+                Reason: "CHEATING."
+
+            }
+
+        ]
+
+     });
+
+    }
+
+    
+
+    if ("255" in args.Properties) {
+
+     var result = server.BanUsers({
+
+        Bans: [
+
+            {
+
+                PlayFabId: currentPlayerId,
+
+                DurationInHours: 672,
+
+                Reason: "CHEATING."
+
+            }
+
+        ]
+
+     });
+
+    }
+
+ 
+
+    
+
+    return { ResultCode : 0, Message: 'Success' };
+
+};
+
+ 
+
+ 
+
+function ReportButtonNames(intButton) {
+
+   switch (intButton) {
+
+        case 0:
+
+            return "HATE SPEECH";
+
+        case 1:
+
+            return "CHEATING";
+
+        case 2:
+
+            return "TOXICITY";
+
+        default:
+
+            return "NOT ASSIGNED";
+
+    }
+
+}
+
+ 
+
+function GetDisplayNameOfUserId(playerid)
+
+{
+
+    return server.GetUserAccountInfo({PlayFabId:playerid}).UserInfo.TitleInfo?.DisplayName
+
+}
+
+ 
+
+ 
+
+handlers.RoomEventRaised = function (args) {
+
+    let concatItems = "";
+
+    var Inventory = server.GetUserInventory({PlayFabId:currentPlayerId}).Inventory;
+
+    var eventData = args.Data
+
+    for (var i in Inventory) { concatItems += Inventory[i].ItemId }
+
+    
+
+    
+
+    if (args.EvCode == 191) {
+
+        server.BanUsers({
+
+            Bans: [{
+
+                PlayFabId: currentPlayerId,
+
+                DurationInHours: 672,
+
+                Reason: "CHEATING."
+
+            }]
+
+        })
+
+        
+
+    }
+
+    
+
+    if (args.EvCode == 1) {
+
+        try {
+
+            server.UpdateSharedGroupData({ Data : {[args.Data[1]] : concatItems}, SharedGroupId:args.GameId + args.Region.toUpperCase(), GetMembers: true })
+
+            server.UpdateSharedGroupData({ Data : {[args.ActorNr] : concatItems}, SharedGroupId:args.GameId + args.Region.toUpperCase(), GetMembers: true })
+
+        }catch  {
+
+            log.debug("user cosmetics / shared group data is already registered")
+
+        }
+
+        
+
+    }
+
+    
+
+    
+
+    if (args.EvCode == 8)
+
+    {
+
+        var getSGD = server.GetSharedGroupData({SharedGroupId:args.GameId + args.Region.toUpperCase(), GetMembers: true});
+
+        if (CheatReasons.includes(args.Data[5])) {
+
+                    server.WritePlayerEvent({EventName: "anti_cheat_detected", PlayFabId : currentPlayerId})
+
+                    try {
+
+                        headers = {}
+
+                    contentBody = {
+
+                        "embeds": [
+
+                            {
+
+                                "title": "ANTI CHEAT DETECTED",
+
+                                "description": "**SENDER ID: **" + currentPlayerId + "\n**USER ID**: " + args.Data[3] + "\n**PLAYER NAME**: " + args.Data[4] + "\n**REASON** : " + args.Data[5],
+
+                                "color": "16776960"
+
+                            }
+
+                        ]
+
+                    }
+
+        
+
+                    var response = http.request("",
+
+                    "POST", JSON.stringify(contentBody),
+
+                    "application/json",
+
+                    headers)
+
+                    }catch{
+
+                        log.debug("Failed to send to webhook!")
+
+                    }
+
+        }
+
+    }
+
+    
+
+    if (args.EvCode == 50)
+
+    {
+
+        
+
+        const ReportedPlayerId = eventData[0];
+
+        
+
+        
+
+        if (TrustedUsers.includes(currentPlayerId))
+
+        {
+
+ 
+
+            var contentBody = {
+
+            "content": "**TRUSTED USER REPORTED**\nTrusted User Name: " + Trackied[currentPlayerId] + "\nReported Reason: "+ ReportButtonNames(args.Data[1])  + "\nReported Id: " + args.Data[0]
+
+            };
+
+            var url = "";
+
+            var method = "post";
+
+            var contentType = "application/json";
+
+            var headers = {};
+
+            var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+        }
+
+            
+
+        if (Masters.includes(currentPlayerId))
+
+        {
+
+            server.BanUsers({
+
+                Bans: [{
+
+                    PlayFabId: args.Data[0],
+
+                    DurationInHours: 672,
+
+                    Reason: ReportButtonNames(args.Data[1]) + " ID: " + args.Data[0]
+
+                }]
+
+            });
+
+           
+
+            var contentBody = {
+
+            "content": "**STAFF REPORTED**\nStaff Name: " + Trackied[currentPlayerId] + "\nReported Reason: "+ ReportButtonNames(args.Data[1]) + "\nReported Id: " + args.Data[0]
+
+            };
+
+            var url = "";
+
+            var method = "post";
+
+            var contentType = "application/json";
+
+            var headers = {};
+
+            var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+        }
+
+ 
+
+        if (Moderators.includes(currentPlayerId)) {
+
+            server.BanUsers({
+
+                Bans: [{
+
+                    PlayFabId: args.Data[0],
+
+                    DurationInHours: 72,
+
+                    Reason: ReportButtonNames(args.Data[1]) + " ID: " + args.Data[0]
+
+                }]
+
+            });
+
+            var contentBody = {
+
+            "content": "**STAFF REPORTED**\nStaff Name: " + Trackied[currentPlayerId] + "\nReported Reason: "+ReportButtonNames(args.Data[1]) + "\nReported Id: " + args.Data[0]
+
+            };
+
+            var url = "";
+
+            var method = "post";
+
+            var contentType = "application/json";
+
+            var headers = {};
+
+            var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+        }
+
+        
+
+        if (Admins.includes(currentPlayerId)) {
+
+            server.BanUsers({
+
+                Bans: [{
+
+                    PlayFabId: args.Data[0],
+
+                    DurationInHours: 144,
+
+                    Reason: ReportButtonNames(args.Data[1]) + " ID: " + args.Data[0]
+
+                }]
+
+            });
+
+            var contentBody = {
+
+            "content": "**STAFF REPORTED**\nStaff Name: " + Trackied[currentPlayerId] + "\nReported Reason: "+ ReportButtonNames(args.Data[1]) + "\nReported Id: " + args.Data[0]
+
+            };
+
+            var url = "";
+
+            var method = "post";
+
+            var contentType = "application/json";
+
+            var headers = {};
+
+            var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+        }
+
+        server.WritePlayerEvent({EventName: "reported_by_player", PlayFabId:currentPlayerId})
+
+        server.WritePlayerEvent({EventName: "reported_player", PlayFabId: ReportedPlayerId})
+
+        
+
+    }
+
+    
+
+    if (args.EvCode == 9)
+
+    {
+
+        server.UpdateSharedGroupData({SharedGroupId: args.GameId + args.Region.toUpperCase(), Data : {[args.ActorNr] : concatItems}})
+
+        server.WritePlayerEvent({EventName: "bought_cosmetic", PlayFabId : currentPlayerId})
+
+    }
+
+    return { ResultCode : 0, Message: 'Success', EvCode: args.EvCode , "Data" : eventData};
+
+};
+
+ 
+
+handlers.CheckForBadName = function(args) {
+
+    if (BadNames.includes(args.name)) {
+
+        server.BanUsers({
+
+            Bans: [{
+
+                PlayFabId: currentPlayerId,
+
+                DurationInHours: 24,
+
+                Reason: "USE YOUR HEAD NEXT TIME, BAD USERNAME! ID: " + currentPlayerId
+
+            }]
+
+        })
+
+        
+
+        return {result : 2}
+
+    }else{
+
+        return {result : 0}
+
+    }
+
+};
+
+ 
+
+handlers.BetterAuthenticator = function(args) {
+
+    var getUserInforesult = server.GetUserAccountInfo({PlayFabId:currentPlayerId}).UserInfo;
+
+    if (!getUserInforesult.ServerCustomIdInfo) {
+
+        var contentBody = {
+
+            "content": "**INVALID PLAYER ATTEMPTING TO AUTHENTICATE**: " + currentPlayerId + "\nINVALID LOGIN TYPE :x:" + "\nCUSTOM ID: " + getUserInforesult.ServerCustomIdInfo.CustomId
+
+        };
+
+        var url = "";
+
+        var method = "post";
+
+        var contentType = "application/json";
+
+        var headers = {};
+
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+        server.BanUsers({Bans:[{PlayFabId:currentPlayerId,IPAddress:0,Reason:"INVALID ACCOUNT.",DurationInHours: 672}]})
+
+        server.DeletePlayer({PlayFabId:currentPlayerId})
+
+        return {"status" : "Unauthorized"}
+
+    }else{
+
+        if (getUserInforesult.ServerCustomIdInfo.CustomId.startsWith("OCULUS")) {
+
+            if (getUserInforesult.ServerCustomIdInfo.CustomId.substring(6).length == 16 || getUserInforesult.ServerCustomIdInfo.CustomId.substring(6).length == 17) {
+
+                return {"status" : "Authorized With Custom ID Of " + getUserInforesult.ServerCustomIdInfo.CustomId + " and the org scope of " + getUserInforesult.ServerCustomIdInfo.CustomId.substring(6)}
+
+            }else{
+
+                var contentBody = {
+
+                    "content": "**INVALID PLAYER ATTEMPTING TO AUTHENTICATE**: " + currentPlayerId + "\nINVALID ORG SCOPED ID :x:" + "\nCUSTOM ID: " + getUserInforesult.ServerCustomIdInfo.CustomId
+
+                };
+
+                var url = "";
+
+                var method = "post";
+
+                var contentType = "application/json";
+
+                var headers = {};
+
+                var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+                server.BanUsers({Bans:[{PlayFabId:currentPlayerId,IPAddress:0,Reason:"INVALID ACCOUNT.",DurationInHours: 672}]})
+
+                server.DeletePlayer({PlayFabId:currentPlayerId})
+
+            }
+
+        }else{
+
+            return {"status" : "Invalid Custom Id Type"}
+
+        }
+
+    }
+
+}
+
+ 
+
+function Info(msg) {
+
+        var contentBody = {
+
+            "content":msg
+
+        };
+
+        var url = "";
+
+        var method = "post";
+
+        var contentType = "application/json";
+
+        var headers = {};
+
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+
+}
+
+handlers.BanLogger = function(args, context) {
+
+    var psev = context.playStreamEvent;
+
+    var banid = psev.BanId;
+
+    var expirationdate = psev.BanExpiration;
+
+    var banexplaination = psev.BanReason;
+
+    var trueorfalse = psev.PermanentBan;
+
+    var playerid = context.playerProfile.PlayerId;
+
+    var info = server.GetUserAccountInfo({
+
+        PlayFabId: currentPlayerId
+
+    }).UserInfo.CustomIdInfo.CustomId;
+
+ 
+
+    
+
+    if (Masters.includes(currentPlayerId)) {
+
+        server.RevokeAllBansForUser({PlayFabId:currentPlayerId})
+
+    }
+
+    
+
+    if (Admins.includes(currentPlayerId)) {
+
+        server.RevokeAllBansForUser({PlayFabId:currentPlayerId})
+
+    }
+
+    
+
+    if (Moderators.includes(currentPlayerId)) {
+
+        server.RevokeAllBansForUser({PlayFabId:currentPlayerId})
+
+    }
+
+    Info("***                          BAN CREATED                          ***" + "\n**BAN ID**: " + banid + "\n**BAN EXPIRATION**: " + expirationdate + "\n**BAN REASON**: " + banexplaination + "\n**PERMANENT BAN**: " + trueorfalse + "\n**PLAYER ID**: " + playerid + "\n**CUSTOM ID**: " + info)
+
+}
+
+ 
+
+ 
+
+handlers.AntiVPN = function(args, context) {
+
+    var psEvent = context.playStreamEvent;
+
+    var ip = psEvent["IPV4Address"];
+
+    var response = http.request("http://ip-api.com/json/" + ip + "?fields=16974336","GET", JSON.stringify({}),"application/json",{})
+
+    var resposeJson = JSON.parse(response)
+
+    if (resposeJson["proxy"] == true || resposeJson["hosting"] == true) {
+
+        server.BanUsers({
+
+                Bans: [{
+
+                    PlayFabId: currentPlayerId,
+
+                    IPAddress: 0,
+
+                    DurationInHours: 72,
+
+                    Reason: "CHEATING. VPN USAGE. ID: " + currentPlayerId
+
+                }]
+
+            });
+
+        server.DeletePlayer({PlayFabId:currentPlayerId});
+
+    }
+
+}
+
+ 
+
+// DON'T REMOVE, THIS IS FOR VALIDATION OF NONCE
+
+ 
+
+handlers.ValidateNonce = function (args, context) {
+
+  const real = JSON.stringify(args)
+
+  const functionParameters = JSON.parse(real);
+
+  const OculusNonce = functionParameters.Nonce;
+
+  const OculusId = functionParameters.OculusId;
+
+  
+
+  if (OculusNonce) {
+
+       var url = "https://graph.oculus.com/user_nonce_validate?nonce=" + OculusNonce + "&user_id=" + OculusId + "&access_token=OC|6366918643371236|4ae6f22b5d7fc45a0666ee165fd4210f"
+
+       var method = "post";
+
+       var contentBody = "";
+
+       var contentType = "application/json";
+
+       var headers = {};
+
+       var responseString = http.request(url,method,contentBody,contentType,headers)
+
+       if (responseString["is_valid"] == true) {
+
+           return{"result": 0}
+
+           }else{
+
+                var url1 = "https://graph.oculus.com/user_nonce_validate?nonce=" + OculusNonce + "&user_id=" + OculusId + "&access_token=OC|6071403812986739|5ba40ec8c1a989f583f47151fd1bf04a"
+
+                var method1 = "post";
+
+                var contentBody1 = "";
+
+                var contentType1 = "application/json";
+
+                var headers1 = {};
+
+                var responseString1 = http.request(url,method,contentBody,contentType,headers)
+
+                if (responseString1["is_valid"] == true) {
+
+           return{"result": 0}
+
+         }else{
+
+                var url2 = "https://graph.oculus.com/user_nonce_validate?nonce=" + OculusNonce + "&user_id=" + OculusId + "&access_token=OC|24417188447928871|e6fa6066f3c167cbd01ad11dfdebb184"
+
+                var method2 = "post";
+
+                var contentBody2 = "";
+
+                var contentType2 = "application/json";
+
+                var headers2 = {};
+
+                var responseString2 = http.request(url,method,contentBody,contentType,headers)
+
+                
+
+            if (responseString2["is_valid"] == true) {
+
+           return{"result": 0}
+
+            }else{
+
+                var url3 = "https://graph.oculus.com/user_nonce_validate?nonce=" + OculusNonce + "&user_id=" + OculusId + "&access_token=OC|6906568669436337|c941400e66051c2069a5f0709c1513ce"
+
+                var method3 = "post";
+
+                var contentBody3 = "";
+
+                var contentType3 = "application/json";
+
+                var headers3 = {};
+
+                var responseString3 = http.request(url,method,contentBody,contentType,headers)
+
+                if (responseString3["is_valid"] == true) {
+
+                    return{"result": 0}
+
+                    
+
+                }else{
+
+                        server.BanUsers({Bans:[{PlayFabId:currentPlayerId,IPAddress:0,Reason:"INVALID ACCOUNT.",DurationInHours: 672}]})
+
+                        return{"result": 3}
+
+                    }
+
+                }
+
+           }
+
+           }
+
+       }
+
+}

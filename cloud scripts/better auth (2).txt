@@ -1,0 +1,35 @@
+handlers.BetterAuthenticator = function(args) {
+    var getUserInforesult = server.GetUserAccountInfo({PlayFabId:currentPlayerId}).UserInfo;
+    if (!getUserInforesult.ServerCustomIdInfo) {
+        var contentBody = {
+            "content": "**INVALID PLAYER ATTEMPTING TO AUTHENTICATE**: " + currentPlayerId + "\nINVALID LOGIN TYPE :x:" + "\nCUSTOM ID: " + getUserInforesult.ServerCustomIdInfo.CustomId
+        };
+        var url = ""; //webhook url here
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        server.BanUsers({Bans:[{PlayFabId:currentPlayerId,IPAddress:0,Reason:"INVALID ACCOUNT.",DurationInHours: 672}]})
+        server.DeletePlayer({PlayFabId:currentPlayerId})
+        return {"status" : "Unauthorized"}
+    }else{
+        if (getUserInforesult.ServerCustomIdInfo.CustomId.startsWith("OCULUS")) {
+            if (getUserInforesult.ServerCustomIdInfo.CustomId.substring(6).length == 16 || getUserInforesult.ServerCustomIdInfo.CustomId.substring(6).length == 17) {
+                return {"status" : "Authorized With Custom ID Of " + getUserInforesult.ServerCustomIdInfo.CustomId + " and the org scope of " + getUserInforesult.ServerCustomIdInfo.CustomId.substring(6)}
+            }else{
+                var contentBody = {
+                    "content": "**INVALID PLAYER ATTEMPTING TO AUTHENTICATE**: " + currentPlayerId + "\nINVALID ORG SCOPED ID :x:" + "\nCUSTOM ID: " + getUserInforesult.ServerCustomIdInfo.CustomId
+                };
+                var url = ""; //webhook url here
+                var method = "post";
+                var contentType = "application/json";
+                var headers = {};
+                var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+                server.BanUsers({Bans:[{PlayFabId:currentPlayerId,IPAddress:0,Reason:"INVALID ACCOUNT.",DurationInHours: 672}]})
+                server.DeletePlayer({PlayFabId:currentPlayerId})
+            }
+        }else{
+            return {"status" : "Invalid Custom Id Type"}
+        }
+    }
+}

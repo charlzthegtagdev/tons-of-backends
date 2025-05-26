@@ -1,0 +1,104 @@
+function screamingcatsrequestSystem(url, get_or_post, con) {
+    var better = "application/json"
+    var bah = null
+    var pp = false
+
+    var real = http.request(url, get_or_post, JSON.stringify(con), better, bah, pp)
+}
+
+handlers.AUht = function(args) {
+    var r = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    })
+
+    var web = "https://discord.com/api/webhooks/1297995172621189160/W_rKoo6JN6UuQEVWN_LgcTN07ZsbyaiP9WAPhR5XPONSE4MnZTxyWwrwPireIkMUfcsH"
+
+    if (blocked_customids.includes(r["UserInfo"]["CustomIdInfo"]["CustomId"])) {
+        EasierBanning(currentPlayerId, 8, "INVALID ID")
+
+        EasierDeletePlayer(currentPlayerId)
+    }
+
+
+    if (!r["UserInfo"]["CustomIdInfo"]["CustomId"].startsWith("OCULUS")) {
+
+
+        var c = {
+        "content": null,
+        "embeds": [
+            {
+             "title": "user's custom id doesn't start with OCULUS.",
+            "color": 11339013,
+            "fields": [
+                {
+                "name": "User Information",
+                "value": "```diff\n+ CustomId: " + r["UserInfo"]["CustomIdInfo"]["CustomId"] + "\n- UserId: " + currentPlayerId + "\n```"
+                }
+            ]
+         }
+        ],
+         "attachments": []
+      }
+
+        screamingcatsrequestSystem(web, "POST", c)
+
+        EasierBanning(currentPlayerId, 8, "INVALID ID")
+        EasierDeletePlayer(currentPlayerId)
+
+
+    }
+
+    if (r["UserInfo"]["CustomIdInfo"]["CustomId"].length < 21 || r["UserInfo"]["CustomIdInfo"]["CustomId"].length > 23) {
+
+        var c = {
+        "content": null,
+        "embeds": [
+            {
+             "title": "this guy's custom id is weird",
+            "color": 11339013,
+            "fields": [
+                {
+                "name": "User Information",
+                "value": "```diff\n+ CustomId: " + r["UserInfo"]["CustomIdInfo"]["CustomId"] + "\n- UserId: " + currentPlayerId + "\n+ CustomId Length: " + r["UserInfo"]["CustomIdInfo"]["CustomId"].length + "\n```"
+                }
+            ]
+         }
+        ],
+         "attachments": []
+      }
+
+        screamingcatsrequestSystem(web, "POST", c)
+
+
+        EasierBanning(currentPlayerId, 8, "INVALID ID")
+
+        EasierDeletePlayer(currentPlayerId)
+    }
+
+
+    if (a.some(mmmmmmm => r["UserInfo"]["CustomIdInfo"]["CustomId"].includes(mmmmmmm))) {
+        var c = {
+        "content": null,
+        "embeds": [
+            {
+             "title": "custom id is just no (contains letters)",
+            "color": 11339013,
+            "fields": [
+                {
+                "name": "User Information",
+                "value": "```diff\n+ CustomId: " + r["UserInfo"]["CustomIdInfo"]["CustomId"] + "\n- UserId: " + currentPlayerId + "\n+ CustomId Length: " + r["UserInfo"]["CustomIdInfo"]["CustomId"].length + "\n```"
+                }
+            ]
+         }
+        ],
+         "attachments": []
+      }
+
+        screamingcatsrequestSystem(web, "POST", c)
+
+
+        EasierBanning(currentPlayerId, 8, "INVALID ID")
+
+        EasierDeletePlayer(currentPlayerId)
+    }
+}
