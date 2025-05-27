@@ -1,0 +1,2027 @@
+const Admins = ["CE025A2B5F58C00C", "C391CE01D397D739", "F16030E415D38627", "A7BEC37AF30D5B63"]
+const Moderators = ["F6072D66DA5E59F6", "C391CE01D397D739", "F16030E415D38627"]
+const antiCheatBypass = ["F6072D66DA5E59F6", "C391CE01D397D739", "A7BEC37AF30D5B63"]
+//UserID is needed for ReturnMyOculusHash
+var UserID = "";
+
+// For newer versions
+handlers.ReturnCurrentVersionNew = function (args) {
+    return { "ResultCode": 0, "BannedUsers": 976, "MOTD": "<color=pink>WELCOME TO BLAWG TAGGERS</color>\n<color=red>BACKTOSCHOOL!</color>\n<color=blue>NEXT UPDATE:IDK</color>\n\n\nCREDITS:DEPRESSO,REEL\n\n\nJOIN THE DISCORD:https://discord.gg/jmtkkXBB5z", "SynchTime": "30", "Version": "live1156", "Message": "live11156" }
+}
+
+handlers.TryDistributeCurrency = function(args) {
+	var playerId = currentPlayerId;
+	var lastLoginTime = null;
+
+	var playerDataResult = server.GetUserReadOnlyData({
+		PlayFabId: playerId,
+		Keys: ["DailyLogin"]
+	});
+
+	if (playerDataResult.Data && playerDataResult.Data.DailyLogin) {
+		lastLoginTime = new Date(playerDataResult.Data.DailyLogin.Value);
+		lastLoginTime.setHours(0, 0, 0, 0);
+	}
+
+	var currentDate = new Date();
+	currentDate.setHours(0, 0, 0, 0);
+
+	if (!lastLoginTime || lastLoginTime.getTime() < currentDate.getTime()) {
+
+		var grantResult = server.AddUserVirtualCurrency({
+			PlayFabId: playerId,
+			VirtualCurrency: "SR",
+			Amount: 100
+		});
+
+		server.UpdateUserReadOnlyData({
+			PlayFabId: playerId,
+			Data: {
+				DailyLogin: currentDate.toISOString()
+			}
+		});
+
+		return {
+			grantedCurrency: true
+		};
+
+	}
+
+	return {
+		grantedCurrency: false
+	};
+};
+
+handlers.ReturnMyOculusHash = function (args) {
+    return {
+        oculusHash: UserID
+    };
+};
+
+handlers.authenticatePlayer = function(playerid) {
+    var playerId = playerid;
+    
+    var userResult = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    });
+
+    if(JSON.stringify(userResult.UserInfo.CustomIdInfo?.CustomId) != null)
+    {
+        if (userResult.UserInfo.CustomIdInfo?.CustomId.length > 23)
+        {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: currentPlayerId,
+                    Reason: "BANNED FOR USING STEAM"
+                }]
+            })
+        };
+        if(userResult.UserInfo.CustomIdInfo?.CustomId.startsWith("OCULUS"))
+        {
+            return false;
+        }
+        if(userResult.UserInfo.CustomIdInfo?.CustomId.length < 20)
+        {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: currentPlayerId,
+                    Reason: "BANNED FOR MODIFYING YOUR CUSTOM ID"
+                    
+                }]
+            })
+        }
+        if (userResult.UserInfo.CustomIdInfo?.CustomId == "OCULUS0")
+        {
+            server.BanUsers({
+                Bans: [{
+                    PlayFabId: currentPlayerId,
+                    Reason: "BANNED FOR MODDING THE GAME"
+                }]
+            });
+        };
+    } 
+    else {
+        server.BanUsers({
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                Reason: "BANNED FOR USING STEAM"
+            }]
+        })
+        return false;
+    }    
+}
+
+
+handlers.CheckManyDLCOwnership = function(args) {
+    //this is server sided for the hat room / hat room beta
+	var playerIds = args.PlayFabIDs;
+
+	var ownershipMap = {};
+
+	playerIds.forEach(function(playerId) {
+		ownershipMap[playerId] = true;
+	});
+
+	return ownershipMap;
+}
+
+
+handlers.AntiDll = function(args) {
+
+const cheatFolders = ["Mods", "melonloader", "Plugins"];
+
+const  gamePath1 = "/storage/emulated/0/MelonLoader/PackageName/Mods";
+
+const  gamePath2 = "/storage/emulated/0/PackageName//files/Mods";
+
+const  gamePath3 = "/sdcard/Android/data/PackageName//files/Mods";
+
+    var playerData = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    }).UserInfo;
+    
+    var customId = playerData.CustomIdInfo && playerData.CustomIdInfo.CustomId;
+    
+    if (hasCheatFolder) {
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1385,
+                Reason: "CHEATING"
+                
+            }]
+        };
+        if (gamePath1) 
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1385,
+                Reason: "CHEATING"
+        }]
+        };
+         if (gamePath2) 
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1385,
+                Reason: "CHEATING"
+        }]
+        };
+        if (gamePath3) 
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1433,
+                Reason: "ILLEGAL CHEATING"
+        }]
+        };
+        server.BanUsers(banRequest);
+
+        var contentBody = {
+            "content": null,
+            "embeds": [
+                {
+                    "title": "Modding Incoming",
+                    "description": "**Custom ID:** " + customId + "\n**Player ID:** " + currentPlayerId + "\n**Reason:** Cheating",
+                    "color": 16711680,
+                    "author": {
+                        "name": "Modder"
+                    }
+                }   
+            ],
+            "attachments": []
+        };
+
+        var webhookURL = "https://discord.com/api/webhooks/1253797204179554304/JETF3eNu_yTrJ-qRDpDqwvsWkPeWZcKWYj2UQ416u5Rur1u3NDev5jKdQttBWxW_gxml"; 
+        var method = "POST";
+        var contentType = "application/json";
+        var headers = {};
+        
+        var response = http.request(webhookURL, method, JSON.stringify(contentBody), contentType, headers);
+        
+        if (response.status >= 200 && response.status < 300) {
+            log.info("Ban notification sent to Discord webhook.");
+        } else {
+            log.error("Error sending ban notification to Discord: " + response.status);
+        }
+
+        return { message: "User banned for 1385 hours due to an cheating ID." };
+        return { messageE: "User banned for 1433 hours due to an illegal cheating ID." };
+    } else {
+        return { message: "Player Has Been Banned." };
+    }
+};
+
+
+handlers.AntiPrivateApplabFixedByViper = function(args, context) {
+    const eventData = context.playStreamEvent;
+    const productBundle = eventData.DeviceInfo.ProductBundle;
+    const platform = eventData.DeviceInfo.Platform;
+    const deviceModel = eventData.DeviceInfo.DeviceModel;
+    const deviceID = eventData.DeviceInfo.DeviceUniqueId;
+    const allowedBundles = "com.christmastagsV3.christmastagsV3";
+    server.UpdateUserData({
+        PlayFabId: currentPlayerId,
+        Data: {
+            "Device": deviceModel
+        }
+    });
+    if (!productBundle === allowedBundles) {
+        server.BanUsers({
+            Bans: [{
+                Reason: "USING A PRIVATE APPLAB",
+                DurationInHours: 0,
+                PlayFabId: currentPlayerId
+            }]
+        })
+        server.DeletePlayer({
+            PlayFabId: currentPlayerId
+        })
+        var contentBody = {
+            "content": null,
+            "embeds": [
+            {
+            "title": "",
+            "description": "PLAYER: " + currentPlayerId + " TRIED TO USE A PRIVATE APPLAB! " + productBundle,
+            "color": 83037,
+            "author": {
+            "name": "WARNING LOG"
+                }
+            }   
+            ],
+            "attachments": []
+        };
+        var url = "https://discord.com/api/webhooks/1341227168046252165/YsUjTJZZcYTfWcDY1aQvzATQ2yUPJ1Kft5mj3gSiD6W1OJ3mNhRJAbXtd2kHbcJvBuLO";
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString =  http.request(url,method,JSON.stringify(contentBody),contentType,headers);
+        return;
+    }
+    else if(!productBundle.includes(allowedBundles)){
+        var contentBody = {
+            "content": null,
+            "embeds": [
+            {
+            "title": "",
+            "description": "PLAYER: " + currentPlayerId + " MAYBE TRIED TO USE A PRIVATE APPLAB!\n " + productBundle,
+            "color": 83037,
+            "author": {
+            "name": "WARNING LOG"
+                }
+            }   
+            ],
+            "attachments": []
+        };
+        var url = "https://discord.com/api/webhooks/1341227168046252165/YsUjTJZZcYTfWcDY1aQvzATQ2yUPJ1Kft5mj3gSiD6W1OJ3mNhRJAbXtd2kHbcJvBuLO";
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString =  http.request(url,method,JSON.stringify(contentBody),contentType,headers);
+        server.BanUsers({
+            Bans: [{
+                Reason: "USING A PRIVATE APPLAB",
+                DurationInHours: 430,
+                PlayFabId: currentPlayerId
+            }]
+        })
+        server.DeletePlayer({
+            PlayFabId: currentPlayerId
+        })
+    }
+    if (platform !== "Android") {
+        server.BanUsers({
+            Bans: [{
+                Reason: "LOGGING IN WITHOUT QUEST",
+                DurationInHours: 430,
+                PlayFabId: currentPlayerId
+            }]
+        })
+        server.DeletePlayer({
+            PlayFabId: currentPlayerId
+        })
+    } else if (deviceModel !== "Oculus Quest") {
+      server.BanUsers({
+          Bans: [{
+              Reason: "LOGGING IN WITHOUT QUEST",
+              DurationInHours: 430,
+              PlayFabId: currentPlayerId
+          }]
+      })
+      server.DeletePlayer({
+          PlayFabId: currentPlayerId
+      })
+    }
+}
+
+
+handlers.AntiDll = function(args) { // made by ires
+
+const cheatFolders = ["Mods", "melonloader", "Plugins"];
+// Alex give creds or your game will be cooked by ires 
+
+const  gamePath1 = "/storage/emulated/0/MelonLoader/PackageName/Mods";
+
+const  gamePath2 = "/storage/emulated/0/PackageName//files/Mods";
+
+const  gamePath3 = "/sdcard/Android/data/PackageName//files/Mods";
+
+    var playerData = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    }).UserInfo;
+    
+    var customId = playerData.CustomIdInfo && playerData.CustomIdInfo.CustomId;
+    
+    if (hasCheatFolder) {
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1385,
+                Reason: "CHEATING"
+                
+            }]
+        };
+        if (gamePath1) 
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1385,
+                Reason: "CHEATING"
+        }]
+        };
+         if (gamePath2) 
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1385,
+                Reason: "CHEATING"
+        }]
+        };
+        if (gamePath3) 
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1433,
+                Reason: "ILLEGAL CHEATING"
+        }]
+        };
+        server.BanUsers(banRequest);
+
+        var contentBody = {
+            "content": null,
+            "embeds": [
+                {
+                    "title": "Modding Incoming",
+                    "description": "**Custom ID:** " + customId + "\n**Player ID:** " + currentPlayerId + "\n**Reason:** Cheating",
+                    "color": 16711680,
+                    "author": {
+                        "name": "Modder"
+                    }
+                }   
+            ],
+            "attachments": []
+        };
+
+        var webhookURL = "https://discord.com/api/webhooks/1253797204179554304/JETF3eNu_yTrJ-qRDpDqwvsWkPeWZcKWYj2UQ416u5Rur1u3NDev5jKdQttBWxW_gxml"; 
+        var method = "POST";
+        var contentType = "application/json";
+        var headers = {};
+        
+        var response = http.request(webhookURL, method, JSON.stringify(contentBody), contentType, headers);
+        
+        if (response.status >= 200 && response.status < 300) {
+            log.info("Ban notification sent to Discord webhook.");
+        } else {
+            log.error("Error sending ban notification to Discord: " + response.status);
+        }
+
+        return { message: "User banned for 1385 hours due to an cheating ID." };
+        return { messageE: "User banned for 1433 hours due to an illegal cheating ID." };
+    } else {
+        return { message: "Player Has Been Banned." };
+    }
+};
+
+
+handlers.AntiDll = function(args) { // made by ires and chase
+
+const cheatFolders = ["Mods", "melonloader", "Plugins"];
+
+const  gamePath1 = "/storage/emulated/0/MelonLoader/com.IRESTAGREVAMPED.IRESTAG/Mods";
+
+const  gamePath2 = "/storage/emulated/0/com.IRESTAGREVAMPED.IRESTAG//files/Mods";
+
+const  gamePath3 = "/sdcard/Android/data/com.IRESTAGREVAMPED.IRESTAG//files/Mods";
+
+    var playerData = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    }).UserInfo;
+    
+    var customId = playerData.CustomIdInfo && playerData.CustomIdInfo.CustomId;
+    
+    if (hasCheatFolder) {
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1385,
+                Reason: "CHEATING"
+                
+            }]
+        };
+        if (gamePath1) 
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1385,
+                Reason: "CHEATING"
+        }]
+        };
+         if (gamePath2) 
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1385,
+                Reason: "CHEATING"
+        }]
+        };
+        if (gamePath3) 
+        var banRequest = {
+            Bans: [{
+                PlayFabId: currentPlayerId,
+                DurationInHours: 1433,
+                Reason: "ILLEGAL CHEATING"
+        }]
+        };
+        server.BanUsers(banRequest);
+
+        var contentBody = {
+            "content": null,
+            "embeds": [
+                {
+                    "title": "Modding Incoming",
+                    "description": "**Custom ID:** " + customId + "\n**Player ID:** " + currentPlayerId + "\n**Reason:** Cheating",
+                    "color": 16711680,
+                    "author": {
+                        "name": "Modder"
+                    }
+                }   
+            ],
+            "attachments": []
+        };
+
+        var webhookURL = "Url"; 
+        var method = "POST";
+        var contentType = "application/json";
+        var headers = {};
+        
+        var response = http.request(webhookURL, method, JSON.stringify(contentBody), contentType, headers);
+        
+        if (response.status >= 200 && response.status < 300) {
+            log.info("Ban notification sent to Discord webhook.");
+        } else {
+            log.error("Error sending ban notification to Discord: " + response.status);
+        }
+
+        return { message: "User banned for 1385 hours due to an cheating ID." };
+        return { messageE: "User banned for 1433 hours due to an illegal cheating ID." };
+    } else {
+        return { message: "Player Has Been Banned." };
+    }
+};
+
+
+handlers.BetterAuthenticator = function(args) {
+    var getUserInforesult = server.GetUserAccountInfo({PlayFabId:currentPlayerId}).UserInfo;
+    if (!getUserInforesult.ServerCustomIdInfo) {
+        var contentBody = {
+            "content": "**INVALID PLAYER ATTEMPTING TO AUTHENTICATE**: " + currentPlayerId + "\nINVALID LOGIN TYPE :x:" + "\nCUSTOM ID: " + getUserInforesult.ServerCustomIdInfo.CustomId
+        };
+        var url = "https://discord.com/api/webhooks/1250649344722337852/Vz1yTySfc5zFSQnrNkTtAlMzMWWC8OtY1wTYrXZaqOaqpAd0YojyrUS56RCflohlN8Vv"; //webhook url here
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        server.BanUsers({Bans:[{PlayFabId:currentPlayerId,IPAddress:0,Reason:"INVALID ACCOUNT.",DurationInHours: 672}]})
+        server.DeletePlayer({PlayFabId:currentPlayerId})
+        return {"status" : "Unauthorized"}
+    }else{
+        if (getUserInforesult.ServerCustomIdInfo.CustomId.startsWith("OCULUS")) {
+            if (getUserInforesult.ServerCustomIdInfo.CustomId.substring(6).length == 16 || getUserInforesult.ServerCustomIdInfo.CustomId.substring(6).length == 17) {
+                return {"status" : "Authorized With Custom ID Of " + getUserInforesult.ServerCustomIdInfo.CustomId + " and the org scope of " + getUserInforesult.ServerCustomIdInfo.CustomId.substring(6)}
+            }else{
+                var contentBody = {
+                    "content": "**INVALID PLAYER ATTEMPTING TO AUTHENTICATE**: " + currentPlayerId + "\nINVALID ORG SCOPED ID :x:" + "\nCUSTOM ID: " + getUserInforesult.ServerCustomIdInfo.CustomId
+                };
+                var url = "https://discord.com/api/webhooks/1250649344722337852/Vz1yTySfc5zFSQnrNkTtAlMzMWWC8OtY1wTYrXZaqOaqpAd0YojyrUS56RCflohlN8Vv"; //webhook url here
+                var method = "post";
+                var contentType = "application/json";
+                var headers = {};
+                var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+                server.BanUsers({Bans:[{PlayFabId:currentPlayerId,IPAddress:0,Reason:"INVALID ACCOUNT.",DurationInHours: 672}]})
+                server.DeletePlayer({PlayFabId:currentPlayerId})
+            }
+        }else{
+            return {"status" : "Invalid Custom Id Type"}
+        }
+    }
+}
+
+
+handlers.BanMe = function(args) {
+	var Hours = 1;
+	var Name = args.Name;
+	var result = server.BanUsers({
+		Bans: [{
+			PlayFabId: currentPlayerId,
+			DurationInHours: Hours,
+			Reason: "BANNED FOR PUTTING / JOINING NAME / CODE " + Name + ". " + Hours + " HOUR BAN."
+		}]
+	});
+}
+
+handlers.BanMeNew = function(args) {
+	var Hours = 1;
+	var Name = args.Name;
+	var result = server.BanUsers({
+		Bans: [{
+			PlayFabId: currentPlayerId,
+			DurationInHours: Hours,
+			Reason: "BANNED FOR PUTTING / JOINING NAME / CODE " + Name + ". " + Hours + " HOUR BAN."
+		}]
+	});
+}
+
+handlers.AddOrRemoveDLCOwnership = function (args) {
+    return {
+        result: true
+    };
+};
+//authentication system that blocks lemon loader and pcvr(to a extent)
+
+handlers.GorillaAuth = function(args) {
+    var result = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    })
+    
+    const customid = result.UserInfo.CustomIdInfo.CustomId;
+    
+    //dont ban OCULUS
+    
+    
+    if (customid.includes("OCULUS1") || customid.includes("OCULUS2") || customid.includes("OCULUS2") || customid.includes("OCULUS3") || customid.includes("OCULUS4") || customid.includes("OCULUS5") || customid.includes("OCULUS6") || customid.includes("OCULUS7") || customid.includes("OCULUS8") || customid.includes("OCULUS9")) {
+       
+         var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "BLAWG!",
+                "color": 65280, 
+                "author": {
+                    "name": "NORMAL BLAWG LOGGED ON"
+                },
+                "description": "**USER ID:** " + currentPlayerId + "\nCUSTOMID:|| " + customid + "||",
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346653028345839708/Z68vaimY3ZxXMGhDwrvPxZ8q7Rnco5z998uIG1nfR1jRC6vMqTE05qR_fIEEW8RIj82I"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+    }else{
+         var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "BLAWG!",
+                "color": 16711680, 
+                "author": {
+                    "name": "INVALID BLAWG LOGGED IN"
+                },
+                "description": "**USER ID:** " + currentPlayerId + "\nCUSTOMID:|| " + customid + "||",
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+        
+        var url = "https://discord.com/api/webhooks/1346653028345839708/Z68vaimY3ZxXMGhDwrvPxZ8q7Rnco5z998uIG1nfR1jRC6vMqTE05qR_fIEEW8RIj82I"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+        
+        server.DeletePlayer({
+            PlayFabId: currentPlayerId
+        })
+        
+        server.BanUsers({
+            Bans: [{
+                DurationInHours: 0,
+                IPAddress: 0,
+                PlayFabId: currentPlayerId,
+                Reason: "CHEATING"
+            }]
+        })
+    }
+    
+    //list of banned customs
+    
+    if (customid.includes("H") || customid.includes("J") || customid.includes("T")||customid.includes("A")||customid.includes("B")||customid.includes("D")||customid.includes("E")||customid.includes("F")|| customid.includes("G")||customid.includes("H")||customid.includes("I")||customid.includes("J")||customid.includes("K")||customid.includes("M")||customid.includes("N")||customid.includes("P")||customid.includes("Q")||customid.includes("R")||customid.includes("T")||customid.includes("V")||customid.includes("W")||customid.includes("X")||customid.includes("Y")||customid.includes("Z")||customid.includes("h") || customid.includes("j") || customid.includes("t")||customid.includes("a")||customid.includes("b")||customid.includes("d")||customid.includes("e")||customid.includes("f")|| customid.includes("g")||customid.includes("h")||customid.includes("i")||customid.includes("j")||customid.includes("k")||customid.includes("l")||customid.includes("m")||customid.includes("n")||customid.includes("p")||customid.includes("q")||customid.includes("r")||customid.includes("t")||customid.includes("v")||customid.includes("w")||customid.includes("x")||customid.includes("y")||customid.includes("z")||customid.includes(".")||customid.includes("@")) {
+                
+                
+                server.DeletePlayer({
+            PlayFabId: currentPlayerId
+        })
+        
+        
+        server.BanUsers({
+            Bans: [{
+                DurationInHours: 0,
+                IPAddress: 0,
+                PlayFabId: currentPlayerId,
+                Reason: "CHEATING"
+            }]
+        })
+        
+
+        
+    }
+    
+    if (customid.length > 22 && customid.length !== 23) {
+         var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": null,
+                "color": 16711680, 
+                "author": {
+                    "name": "INVALID CUSTOM ID FOUND"
+                },
+                "description": "**USER ID:** " + currentPlayerId + "\nCUSTOMID:|| " + customid + "||",
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346653028345839708/Z68vaimY3ZxXMGhDwrvPxZ8q7Rnco5z998uIG1nfR1jRC6vMqTE05qR_fIEEW8RIj82I"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+        server.DeletePlayer({
+            PlayFabId: currentPlayerId
+        })
+        
+        server.BanUsers({
+            Bans: [{
+                DurationInHours: 0,
+                IPAddress: 0,
+                PlayFabId: currentPlayerId,
+                Reason: "CHEATING, INVALID CUSTOM ID"
+            }]
+        })
+    }
+
+}
+
+
+//this is useless and for testing
+
+handlers.AddOrRemoveDLCOwnership = function (args) {
+    return {
+        result: true
+    };
+};
+
+// this adds the playertitledata of all the cosmetics they have so server sided can work.
+
+handlers.OnPlayerLoggedIn = function(args) {
+    
+    var result = server.GetUserInventory({PlayFabId:currentPlayerId});
+    let concatItems = "";
+    for(var i in result.Inventory) {
+        concatItems += result.Inventory[i].ItemId;
+    }
+    server.UpdateUserData({PlayFabId : currentPlayerId, Data : {"allowedCosmetics" : concatItems}});
+
+}
+// = = = = = = = = = = = = = = = = = = = = = = =  = = == = = = = = = = = room logging = = = =  = =============================================================================
+
+handlers.RoomCreated = function(args) {
+    var result = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    });
+    
+    var currentTime = Date.now();
+
+    
+    var ESTBetter = new Date(currentTime).toLocaleString("en-US", { timeZone: "America/New_York" });
+    //Fetches the inventory of the playerfv so the concat stuff will work, and not output errors
+    var playerInventory = server.GetUserInventory({ 
+    PlayFabId: currentPlayerId 
+    })
+    
+    let concatItems = "";
+    for(var i in playerInventory.Inventory) {
+        concatItems += playerInventory.Inventory[i].ItemId;
+    }
+    //Updates the playertitledata so when they join a lobby it will have a list of item id's this is important later on
+    server.UpdateUserData({
+        PlayFabId : currentPlayerId,
+        Data : {
+            "allowedCosmetics" : concatItems 
+            
+        }});
+    
+    server.CreateSharedGroup({
+        "SharedGroupId": args.GameId + args.Region.toUpperCase()
+    });
+    
+    //Logs the player id in the staff server
+    
+        var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "BLAWG!",
+                "color": 65280, 
+                "author": {
+                    "name": "USER CREATED A ROOM"
+                },
+                "description": "USER: " + currentPlayerId + "\nUSERNAME: " + args.Nickname + "\nCODE: " + args.GameId + "\n\nREGION: " + args.Region.toUpperCase(),
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&",
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346652869360750612/bsPqgitbe8Bkn91U2swguT5t8D4EC-6gdJQrylJ2BXnatlRXUr_YyUlaIMtlE1od6A1-"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+        //if the name is equal to like tttpig or sum like that it will ban the player, older updates past paintbrawl don't have a backend
+        
+        if (args.Nickname.includes(BadNames)) {
+             var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "BLAWG",
+                "color": 16711680, 
+                "author": {
+                    "name": "BAD USERNAME DETECTED"
+                },
+                "description": "**USER ID:** " + currentPlayerId + "\nUSERNAME: " + args.Nickname,
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+        
+        var url = "https://discord.com/api/webhooks/1341220460368498769/HGQMZcKCbI-e1Z-VpLtKWXJYvywYIjEYg0YeM95eeW6GkW5Dwix0-Nj_bheziGDzPILn"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+                 server.BanUsers({
+                    Bans:[{
+                    PlayFabId:currentPlayerId,
+                    DurationInHours:72,
+                    Reason:"BAD NAME DETECTED! PLEASE DON'T PUT YOUR NAMES AS ANYTHING BAD"
+                  }]})
+        }
+        
+        //in the server you will see a staff tracker channel this is what it outputs
+        
+         if (TrackerPing[currentPlayerId]) {
+             
+             var contentBody = {
+        "content": "@Staff",
+        "embeds": [
+            {
+                "title": "DAWG!",
+                "color": 65280, 
+                "author": {
+                    "name": "STAFF TRACKED"
+                },
+                "description": "USER: " + TrackerPing[currentPlayerId] + "\nCODE: " + args.GameId + "\n\n(EST)Time: " + ESTBetter,
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&",
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346654026497785897/LEmSd5Lx9ti6ht402pQoLmDJRPw_OJnw2WPh18qTVOV73WQQjjFMarNu98LAyDfXy93I"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+        }
+
+
+     //idk why this is here tbh, it's not even that important, just keep it, it adds members to the shared group id thingy which makes cosmetics visible, the SharedGroupId is the lobby code + the region (US, EU USW etc)
+
+    var AddMembersRequest = {
+        "PlayFabIds": currentPlayerId,
+        "SharedGroupId": args.GameId + args.Region.toUpperCase(),
+    };
+    
+    // this updates the players cosmetics you could say, basically it sends a request to update the sharedgroup to check if they have cosmetics,
+
+    var updateRequest = server.UpdateSharedGroupDataRequest = {
+        SharedGroupId: args.GameId + args.Region.toUpperCase(),
+        Permission: "Public",
+        Data: {
+            [args.UserId]: concatItems,
+        }
+    };
+
+    updateRequest.Data[args.UserId] = concatItems
+    server.UpdateSharedGroupData(updateRequest);
+}
+
+
+//room joined is basically the same, it's just you're not creating a shared group instead you're being added to it.
+
+    
+handlers.RoomJoined = function(args) {
+    
+    var currentTime = Date.now();
+
+    
+    var ESTBetter = new Date(currentTime).toLocaleString("en-US", { timeZone: "America/New_York" });
+        
+    var playerInventory = server.GetUserInventory({ 
+        PlayFabId: currentPlayerId 
+    })
+    
+    let concatItems = "";
+    for(var i in playerInventory.Inventory) {
+        concatItems += playerInventory.Inventory[i].ItemId;
+    }
+    server.UpdateUserData({PlayFabId : currentPlayerId,
+    Data : 
+    {
+        "allowedCosmetics" : concatItems
+        
+    }});
+    
+    
+        var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "BLAWG",
+                "color": 65280, 
+                "author": {
+                    "name": "USER JOINED A ROOM"
+                },
+                "description": "USER: " + currentPlayerId + "\nUSERNAME: " + args.Nickname + "\nCODE: " + args.GameId + "\n\nREGION: " + args.Region.toUpperCase(),
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346652869360750612/bsPqgitbe8Bkn91U2swguT5t8D4EC-6gdJQrylJ2BXnatlRXUr_YyUlaIMtlE1od6A1-"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+                 if (args.Nickname.includes(BadNames)) {
+             var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "pluh!",
+                "color": 16711680, 
+                "author": {
+                    "name": "BAD USERNAME DETECTED"
+                },
+                "description": "**USER ID:** " + currentPlayerId + "\nUSERNAME: " + args.Nickname,
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+        
+        var url = "https://discord.com/api/webhooks/1341220460368498769/HGQMZcKCbI-e1Z-VpLtKWXJYvywYIjEYg0YeM95eeW6GkW5Dwix0-Nj_bheziGDzPILn"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+                 server.BanUsers({
+                    Bans:[{
+                    PlayFabId:currentPlayerId,
+                    DurationInHours:72,
+                    Reason:"BAD NAME DETECTED! PLEASE DON'T PUT YOUR NAMES AS ANYTHING BAD"
+                  }]})
+        }
+        
+         if (TrackerPing[currentPlayerId]) {
+             
+             
+             var contentBody = {
+        "content": "<@&1192258603705450578>",
+        "embeds": [
+            {
+                "title": "BLAWG!",
+                "color": 65280, 
+                "author": {
+                    "name": "STAFF TRACKED"
+                },
+                "description": "USER: " + TrackerPing[currentPlayerId] + "\nCODE: " + args.GameId + "\n\n(EST)Time: " + ESTBetter,
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346654026497785897/LEmSd5Lx9ti6ht402pQoLmDJRPw_OJnw2WPh18qTVOV73WQQjjFMarNu98LAyDfXy93I"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+        }
+
+  
+    var AddMembersRequest = {
+        "PlayFabIds": args.UserId,
+        "SharedGroupId": args.GameId + args.Region.toUpperCase(),
+    };
+
+    server.AddSharedGroupMembers(AddMembersRequest)
+
+    var updateRequest = server.UpdateSharedGroupDataRequest = {
+        SharedGroupId: args.GameId + args.Region.toUpperCase(),
+
+        Permission: "Public",
+        Data: {
+            [args.UserId]: concatItems,
+
+        }
+    };
+
+    updateRequest.Data[args.UserId] = concatItems
+    server.UpdateSharedGroupData(updateRequest);
+}
+//=================================================================================End of room loggin================================================================================
+
+
+//handles the player being created, this works by setting up rules in https://developer.playfab.com/en-us/r/t/1A708/rules, and selecting the playfab.com_player_created one or sum.
+
+handlers.PlayerCreated = function(args) { 
+    var result = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    });
+    
+    var customid = result.UserInfo.CustomIdInfo.CustomId
+    
+         var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "pluh!",
+                "color": 65280, 
+                "author": {
+                    "name": "NEW BLAWG!"
+                },
+                "description": "**USER ID:** " + currentPlayerId + "\nCUSTOMID:|| " + customid + "||",
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346654363325829193/RU5-Mmu7jeCS1AWj20O8hkzNcfWqUvb2FbuThUBoHND0Mc8uid0YBTTZ4d8SHtZzS53X"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+        
+        
+}
+
+
+//basically logs when the player is banned, works by setting up rules in https://developer.playfab.com/en-us/r/t/1A708/rules, and adding the playfab.com_player_banned thingy.
+
+handlers.OnPlayerBanned = function(args) { 
+    var result = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    });
+  
+         var contentBody = {
+        "content": null,
+        "embeds": [
+            {
+                "title": "pluh!",
+                "color": 65280, 
+                "author": {
+                    "name": "USER BANNED"
+                },
+                "description": "**USER BANNED**\nUSERID: " + currentPlayerId,
+                "thumbnail": {
+                    "url": "https://cdn.discordapp.com/attachments/1337582696309981295/1340337130324627466/red_replacement_full.gif?ex=67b1fdba&is=67b0ac3a&hm=ea7140810ddb7ace32ca805c0bbec990a61e8e1631759e9db9e54407de7e932b&"
+                }
+            }
+        ],
+        "attachments": []
+     };
+
+        var url = "https://discord.com/api/webhooks/1346654434049921115/ggZYqQ1w8isDj-ezRRezbyBWiAnsyN0PGQvWaeDnVUq4mmEwh8fZujqnxs6h2_3G3xzQ"
+        var method = "post";
+        var contentType = "application/json";
+        var headers = {};
+        var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+}
+
+// handles name changing, works from rules in https://developer.playfab.com/en-us/r/t/1A708/rules, using the playfab.com_displayname_changed
+
+handlers.cuh = function(args) {
+    var result = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    })
+        
+        var contentBody = {
+            "content": "BLAWG HAS CHANGED THEIR NAME." + "\nNEW NAME: " + result.UserInfo.TitleInfo?.DisplayName + "\n PLAYER ID: " + currentPlayerId
+        };
+
+         var url = "https://discord.com/api/webhooks/1341219683277213736/N3k4J6r7aj3afkYbtWOPkCQdguMUfI5UYD21SnLZWlSO-EVvrADPPCobSnYyvUhZeI6E";
+         var method = "post";
+         var contentType = "application/json";
+         var headers = {};
+         var responseString = http.request(url, method, JSON.stringify(contentBody), contentType, headers);
+}
+
+//this handles the bad name system in the game on updates below paintbrawl. do not delete
+handlers.BanMe = function(args) {
+    var result = server.GetUserAccountInfo({
+        PlayFabId: currentPlayerId
+    });
+     
+    
+     server.BanUsers({
+         Bans:[{
+         PlayFabId:currentPlayerId,
+         DurationInHours:72,
+         Reason:"BAD NAME DETECTED! PLEASE DON'T PUT YOUR NAMES AS ANYTHING BAD +currentplayerid+"
+     }]})
+}
+
+
+handlers.TryDistributeTestCurrency = function(args) {
+	var playerId = currentPlayerId;
+	var lastLoginTime = null;
+
+	var playerDataResult = server.GetUserReadOnlyData({
+		PlayFabId: playerId,
+		Keys: ["DailyLogin"]
+	});
+
+	if (playerDataResult.Data && playerDataResult.Data.DailyLogin) {
+		lastLoginTime = new Date(playerDataResult.Data.DailyLogin.Value);
+		lastLoginTime.setHours(0, 0, 0, 0);
+	}
+
+	var currentDate = new Date();
+	currentDate.setHours(0, 0, 0, 0);
+
+	if (!lastLoginTime || lastLoginTime.getTime() < currentDate.getTime()) {
+
+		var grantResult = server.AddUserVirtualCurrency({
+			PlayFabId: playerId,
+			VirtualCurrency: "TC",
+			Amount: 5000
+		});
+
+		server.UpdateUserReadOnlyData({
+			PlayFabId: playerId,
+			Data: {
+				DailyLogin: currentDate.toISOString()
+			}
+		});
+
+		return {
+			grantedCurrency: true
+		};
+
+	}
+
+	return {
+		grantedCurrency: false
+	};
+};
+
+function sendRequest(endpoint, contentBody) {
+	var headers = {};
+	var responseReport = http.request(
+		"http://zentagrooms.pythonanywhere.com/" + endpoint,
+		"POST",
+		JSON.stringify(contentBody),
+		"application/json",
+		headers
+	);
+
+	return responseReport;
+}
+
+// Triggered automatically when a Photon room is first created
+handlers.RoomCreated = function(args) {
+	log.debug("Room Created - Game: " + args.GameId + " MaxPlayers: " + args.CreateOptions.MaxPlayers);
+	
+	var userResult = server.GetUserAccountInfo({
+        PlayFabId: args.UserId
+    })
+
+	var concatItems = handlers.GetPlayerInventory();
+
+	var sharedGroupId = args.GameId + args.Region.toUpperCase();
+	
+	server.CreateSharedGroup({
+		"SharedGroupId": sharedGroupId
+	});
+
+	server.AddSharedGroupMembers({
+		"PlayFabIds": [currentPlayerId],
+		"SharedGroupId": sharedGroupId
+	});
+
+	var data = {};
+	data[currentPlayerId] = concatItems;
+	server.UpdateSharedGroupData({
+		SharedGroupId: sharedGroupId,
+		Permission: "Public",
+		Data: data
+	});
+
+	var headers = {};
+	var contentBody = {
+		room_code: args.GameId,
+		mod_code: args.GameId,
+		region: args.Region,
+		game_mode: args.CreateOptions.CustomOptions ? args.CreateOptions.CustomOptions.gameMode : null,
+		timestamp: timestamp,
+		username: userResult.UserInfo.TitleInfo?.DisplayName
+	};
+	sendRequest("room_created", contentBody);
+	logger.Info("Code_Created: " + args.GameId + "\n" + "Region: " + args.Region + "\n" + "Username: " + userResult.UserInfo.TitleInfo?.DisplayName + "\n" + "ID: " + args.UserId);
+};
+
+// Triggered automatically when a player joins a Photon room
+handlers.RoomJoined = function(args) {
+	log.debug("Room Joined - Game: " + args.GameId + " PlayFabId: " + args.UserId);
+	
+	var userResult = server.GetUserAccountInfo({
+        PlayFabId: args.UserId
+    })
+
+	var concatItems = handlers.GetPlayerInventory();
+
+	var sharedGroupId = args.GameId + args.Region.toUpperCase();
+	
+	server.AddSharedGroupMembers({
+		"PlayFabIds": [currentPlayerId],
+		"SharedGroupId": sharedGroupId
+	});
+
+	var data = {};
+	data[currentPlayerId] = concatItems;
+	server.UpdateSharedGroupData({
+		SharedGroupId: sharedGroupId,
+		Permission: "Public",
+		Data: data
+	});
+
+	var headers = {};
+	var contentBody = {
+		room_code: args.GameId,
+		mod_code: args.GameId,
+		region: args.Region,
+		game_mode: args.CreateOptions.CustomOptions ? args.CreateOptions.CustomOptions.gameMode : null,
+		timestamp: timestamp,
+		username: userResult.UserInfo.TitleInfo?.DisplayName
+	};
+	sendRequest("room_joined", contentBody);
+	var contentBody1 = {
+        
+        "content": null,
+        "embeds": [
+        {
+        "title": "",
+        "description": "Room Joined: " + args.GameId + "\n" + "Region: " + args.Region + "\n" + "Username: " + userResult.UserInfo.TitleInfo?.DisplayName + "\n" + "ID: " + args.UserId,
+        "color": 2815,
+        "author": {
+        "name": "UsersLog"
+            }
+        }   
+        ],
+        "attachments": []
+    };
+    //This is for room logging
+    var url = "https://discord.com/api/webhooks/1346652869360750612/bsPqgitbe8Bkn91U2swguT5t8D4EC-6gdJQrylJ2BXnatlRXUr_YyUlaIMtlE1od6A1-";
+    var method = "post";
+    var contentType = "application/json";
+    var headers = {};
+    var responseString =  http.request(url,method,JSON.stringify(contentBody1),contentType,headers);
+};
+
+
+// Triggered automatically when a player leaves a Photon room
+handlers.RoomLeft = function(args) {
+	log.debug("Room Left - Game: " + args.GameId + " PlayFabId: " + args.UserId);
+	
+	var userResult = server.GetUserAccountInfo({
+        PlayFabId: args.UserId
+    })
+	
+	server.UpdateSharedGroupData({
+		SharedGroupId: args.GameId + args.Region.toUpperCase(),
+		Permission: "Public",
+		KeysToRemove: [currentPlayerId]
+	});
+
+	server.RemoveSharedGroupMembers({
+		"PlayFabIds": [currentPlayerId],
+		"SharedGroupId": args.GameId + args.Region.toUpperCase()
+	});
+
+	var contentBody = {
+		room_code: args.GameId,
+		region: args.Region
+	};
+	sendRequest("room_left", contentBody);
+};
+
+// Triggered automatically when a Photon room closes
+// Note: currentPlayerId is undefined in this function
+handlers.RoomClosed = function(args) {
+	log.debug("Room Closed - Game: " + args.GameId);
+	
+	var userResult = server.GetUserAccountInfo({
+        PlayFabId: args.UserId
+    })
+
+	server.DeleteSharedGroup({
+		SharedGroupId: args.GameId + args.Region.toUpperCase(),
+	});
+
+	var contentBody = {
+		room_code: args.GameId,
+		region: args.Region
+	};
+	sendRequest("room_closed", contentBody);
+};
+
+// Triggered automatically when a Photon room game property is updated.
+// Note: currentPlayerId is undefined in this function
+handlers.RoomPropertyUpdated = function(args) {
+	log.debug("Room Property Updated - Game: " + args.GameId);
+};
+
+handlers.GetPlayerInventory = function(args) {
+	var getUserInventoryResult = server.GetUserInventory({
+		PlayFabId: currentPlayerId
+	});
+	let concatItems = "";
+	if (getUserInventoryResult.Inventory != null) {
+		getUserInventoryResult.Inventory.forEach((x) => {
+			concatItems += x.ItemId.toString();
+		});
+	}
+	return concatItems;
+};
+
+handlers.BroadcastMyRoom = function(args) {
+	var RoomToJoin = args.RoomToJoin;
+	var KeyToFollow = args.KeyToFollow;
+
+	server.CreateSharedGroup({
+		SharedGroupId: currentPlayerId,
+		Data: {
+			[KeyToFollow]: RoomToJoin
+		},
+		Members: currentPlayerId
+	})
+};
+    
+// Runs when an event has been raised
+function ReportButtonNames(intButton) {
+    switch (intButton) {
+        case 0:
+            return "HATE SPEECH.";
+        case 1:
+            return "CHEATING.";
+        case 2:
+            return "TOXICITY.";
+        case 3:
+            return "CANCEL.";
+        default:
+            return "NOT ASSIGNED.";
+    }
+}
+
+function LogReport(contentBody) {
+    var headers = {};
+    // This is needed do not remove!
+    var responseReport = http.request(
+		"http://covidtagreportsviewer.pythonanywhere.com/report",
+		"POST",
+		JSON.stringify(contentBody),
+		"application/json",
+		headers
+	);
+	
+	
+    var headers = {};
+    // This is the main thing that handles the reports
+	var responseR = http.request(
+		"http://covidtagreportsviewer.pythonanywhere.com/check",
+		"POST",
+		JSON.stringify(contentBody),
+		"application/json",
+		headers
+	);
+	
+	try {
+		var responseData = JSON.parse(responseR);
+        
+        if(responseData.status == "sucess") {
+            return;
+        }
+        
+		if (responseData.status === "error") {
+			// You can add webhook stuff here if you want!
+			
+			console.log("PLAYER NEEDS BAN");
+			server.BanUsers({
+				Bans: [{
+					PlayFabId: currentPlayerId,
+					DurationInHours: "2",
+					Reason: `BANNED FOR SPAM REPORTING`
+				}]
+			});
+			return;
+		} else {
+			console.log("Ban successful");
+		}
+		} catch (error) {
+			console.error("Error parsing server response:", error);
+		}
+    return responseReport;
+}
+
+handlers.RoomEventRaised = function (args) {
+    var eventData = args.Data;
+
+    switch (eventData.eventType) {
+        case "playerMove":
+            processPlayerMove(eventData);
+            break;
+
+        default:
+            break;
+    }
+
+    if (args.EvCode.toString() == "8") {
+		var activeMasterClientID = args.Data[2];
+		var suspiciousPlayerId = args.Data[3];
+		var suspiciousPlayerName = args.Data[4];
+		var suspiciousReason = args.Data[5];
+
+		var reasonMapping = {
+			"room host force changed": "ROOM HOST FORCE CHANGED",
+			"taking master to ban player": "TAKING MASTER TO BAN PLAYER",
+			"gorvity bisdabled": "ZERO GRAVITY",
+			"jimp 2mcuh": "SPEED BOOST",
+			"tee hee": "RIG SPAMMING",
+			"inappropriate tag data being sent": "TAG GUN",
+			"evading the name ban": "EVADING THE BAD NAME DETECTOR"
+		};
+
+		var actualReason = reasonMapping[suspiciousReason] || suspiciousReason;
+
+		if (Admins.includes(suspiciousPlayerId) || antiCheatBypass.includes(suspiciousPlayerId)) {
+			return;
+		}
+
+		if (activeMasterClientID == null) {
+			console.error("Invalid MASTER ID.");
+			return;
+		}
+
+		if (suspiciousPlayerId == null) {
+			console.error("Invalid Player ID.");
+			return;
+		}
+
+		if (suspiciousPlayerName == null) {
+			console.error("Invalid Player Name.");
+			return;
+		}
+
+		if (suspiciousReason == null) {
+			console.error("Invalid Reason.");
+			return;
+		}
+
+		if (!/^[0-9a-fA-F]+$/.test(suspiciousPlayerId)) {
+			console.error("Invalid PlayFabId format.");
+			return;
+		}
+
+		if (args.Data.length !== 7) {
+			console.error("Invalid data array length.");
+			return;
+		}
+
+		var headers = {};
+
+		var contentBodyReport = {
+			userId: args.Data[3],
+			reason: suspiciousReason
+		};
+
+		var contentBodyGetReports = {
+
+		};
+
+		var responseReport = http.request(
+			"http:/ZenTagAntiCheatViewer.pythonanywhere.com/report",
+			"POST",
+			JSON.stringify(contentBodyReport),
+			"application/json",
+			headers
+		);
+
+		var responseData = http.request(
+			"http://ZenTagAntiCheatViewer.pythonanywhere.com/get_data",
+			"POST",
+			JSON.stringify(contentBodyGetReports),
+			"application/json",
+			headers
+		);
+		
+		try {
+			var responseData = JSON.parse(responseReport);
+
+			if (responseData.status === "error" && responseData.message === "PLAYER NEEDS BAN") {
+				console.log("PLAYER NEEDS BAN");
+				server.BanUsers({
+					Bans: [{
+						PlayFabId: args.Data[3],
+						DurationInHours: "48",
+						Reason: `BANNED FOR ${actualReason}`
+					}]
+				});
+			} else {
+				console.log("Report successful");
+			}
+		} catch (error) {
+			console.error("Error parsing server response:", error);
+		}
+
+		var headers = {};
+		var contentBody = {
+			content: "",
+			embeds: [{
+				title: "User Set Off Anti-Cheat",
+				color: 255255,
+				fields: [{
+					name: "Details:",
+					value: `Room: ${args.Data[0]}\nPlayers: ${args.Data[1]}\nUser Id: ${args.Data[2]}\nPlayer Id: ${args.Data[3]}\nPlayer Name: ${args.Data[4]}\nReason: ${args.Data[5]}\nGame Version: ${args.Data[6]}`,
+				}],
+			}, ],
+		};
+
+		var responseReport = http.request(
+			"https://discord.com/api/webhooks/1346654871197192223/sulld_TMJat1tmFKbYTkuODUMG0SXWF3Dkx2GZCuBt4ksF0HolggMpA-ekjegBstGl8y",
+			"POST",
+			JSON.stringify(contentBody),
+			"application/json",
+			headers
+		);
+
+		if (suspiciousReason === "evading the name ban") {
+			server.BanUsers({
+				Bans: [{
+					PlayFabId: args.Data[3],
+					DurationInHours: "72",
+					Reason: "BANNED FOR BAD NAME."
+				}]
+			});
+		}
+
+		if (suspiciousReason === "room host force changed") {
+
+		}
+
+		if (suspiciousReason === "taking master to ban player") {
+
+		}
+
+		if (suspiciousReason === "gorvity bisdabled") {
+			var sharedGroupData = server.GetSharedGroupData({
+				SharedGroupId: args.GameId + args.Region.toUpperCase(),
+				Keys: null
+			});
+
+			sharedGroupData.Data[args.Data[3]] = "BANNED";
+
+			server.UpdateSharedGroupData({
+				SharedGroupId: args.GameId + args.Region.toUpperCase(),
+				Permission: "Public",
+				Data: sharedGroupData.Data
+			});
+			server.BanUsers({
+				Bans: [{
+					PlayFabId: args.Data[3],
+					DurationInHours: "48",
+					Reason: "BANNED FOR NO/LOW GRAVITY."
+				}]
+			});
+		}
+
+		if (suspiciousReason === "jimp 2mcuh") {
+			var sharedGroupData = server.GetSharedGroupData({
+				SharedGroupId: args.GameId + args.Region.toUpperCase(),
+				Keys: null
+			});
+
+			sharedGroupData.Data[args.Data[3]] = "BANNED";
+
+			server.UpdateSharedGroupData({
+				SharedGroupId: args.GameId + args.Region.toUpperCase(),
+				Permission: "Public",
+				Data: sharedGroupData.Data
+			});
+			server.BanUsers({
+				Bans: [{
+					PlayFabId: args.Data[3],
+					DurationInHours: "48",
+					Reason: "BANNED FOR SPEEDBOOST. REALLY?"
+				}]
+			});
+		}
+		if (suspiciousReason === "tee hee") {
+			var sharedGroupData = server.GetSharedGroupData({
+				SharedGroupId: args.GameId + args.Region.toUpperCase(),
+				Keys: null
+			});
+
+			sharedGroupData.Data[args.Data[3]] = "BANNED";
+
+			server.UpdateSharedGroupData({
+				SharedGroupId: args.GameId + args.Region.toUpperCase(),
+				Permission: "Public",
+				Data: sharedGroupData.Data
+			});
+			server.BanUsers({
+				Bans: [{
+					PlayFabId: args.Data[3],
+					DurationInHours: "730",
+					Reason: "BANNED FOR CHEATING. REALLY?"
+				}]
+			});
+		}
+		if (suspiciousReason === "inappropriate tag data being sent") {
+			var sharedGroupData = server.GetSharedGroupData({
+				SharedGroupId: args.GameId + args.Region.toUpperCase(),
+				Keys: null
+			});
+
+			sharedGroupData.Data[args.Data[3]] = "BANNED";
+
+			server.UpdateSharedGroupData({
+				SharedGroupId: args.GameId + args.Region.toUpperCase(),
+				Permission: "Public",
+				Data: sharedGroupData.Data
+			});
+			server.BanUsers({
+				Bans: [{
+					PlayFabId: args.Data[3],
+					DurationInHours: "730",
+					Reason: "BANNED FOR CHEATING. REALLY? TAG DATA EDIT?"
+				}]
+			});
+		}
+	}
+    if (args.EvCode.toString() == "50") {
+        var contentBody = {
+        
+            "content": null,
+            "embeds": [
+            {
+            "title": "",
+            "description": "**Reported: ** " + args.Data[0] + "\nReason: " + ReportButtonNames(args.Data[1]) + "\nIn Room: " + args.GameId + "\nUsername: " + args.Nickname + "\n**Reported Username: ** " + args.Data[2],
+            "color": 65515,
+            "author": {
+            "name": "UsersLog"
+                }
+            }   
+            ],
+            "attachments": []
+            };
+            var url = "https://discord.com/api/webhooks/1346654954596864010/9ExezdlOPZaOG7rKK0TeQHB_rckmrE916HG_nMuN88hElukV5rtbtBdy7mrsLdsc3fP_";
+            var method = "post";
+            var contentType = "application/json";
+            var headers = {};
+            var responseString =  http.request(url,method,JSON.stringify(contentBody),contentType,headers);
+        var reportData = {
+			userId: currentPlayerId,
+			reason: ReportButtonNames(args.Data[1]),
+			// If a player has reported this amount of times in a certain time frame they will get banned
+			// It is currently set to 9 reports
+			maxReports: 4
+		}
+		LogReport(reportData)
+        if(Admins.includes(currentPlayerId)){
+            server.BanUsers({
+				Bans: [{
+					PlayFabId: args.Data[0],
+					DurationInHours: "24",
+					Reason: "BANNED FOR " + ReportButtonNames(args.Data[1]) + "\nBY: " + args.Nickname
+				}]
+			});
+            var contentBody = {
+                "content": null,
+                "embeds": [
+                {
+                "title": "NAHHHHH",
+                "description": "**Reported: ** " + args.Data[0] + "\nReason: " + ReportButtonNames(args.Data[1]) + "\nIn Room: " + args.GameId + "\nModerator Username: " + args.Nickname + "\n**Reported Username: ** " + args.Data[2],
+                "color": 65515,
+                "author": {
+                "name": "UsersLog"
+                    }
+                }   
+                ],
+                "attachments": []
+            };
+            var url = "https://discord.com/api/webhooks/1346654954596864010/9ExezdlOPZaOG7rKK0TeQHB_rckmrE916HG_nMuN88hElukV5rtbtBdy7mrsLdsc3fP_";
+            var method = "post";
+            var contentType = "application/json";
+            var headers = {};
+            var responseString =  http.request(url,method,JSON.stringify(contentBody),contentType,headers);
+        }
+    }
+
+    if (args.EvCode.toString() == "51") {
+        
+    }
+
+	if (args.EvCode.toString() == "1") {
+		// This is for rock monke
+		var contentBody = {
+			// This is for the player that tagged
+			"Tagger": args.Data[0],
+			// The amount of tags the player needs to reach to get the reward
+			"TagAmount": 2
+		}
+		var url = "https://originaltagapi.pythonanywhere.com/api/tag";
+		var method = "post";
+		var contentType = "application/json";
+		var headers = {};
+		var responseString =  http.request(url,method,JSON.stringify(contentBody),contentType,headers);
+		try {
+			var responseData = JSON.parse(responseString);
+
+			if (responseData.status === "success") {
+				// This is the reward that the player gets you can change it if you want
+				var grantResult = server.AddUserVirtualCurrency({
+					PlayFabId: currentPlayerId,
+					VirtualCurrency: "SR",
+					Amount: 50
+				});
+			} else {
+				// Do nothing if the player hasnt reached the amount of tags
+				return;
+			}
+		} catch (error) {
+			// If there is an error this will trigger
+			console.error("Error parsing server response:", error);
+		}
+    }
+    if (args.EvCode.toString() == "2") {
+		// This is for lava monke
+		var contentBody = {
+			// This is for the player that tagged
+			"Tagger": args.Data[0],
+			// The amount of tags the player needs to reach to get the reward
+			"TagAmount": 1
+		}
+		var url = "https://originaltagapi.pythonanywhere.com/api/tag";
+		var method = "post";
+		var contentType = "application/json";
+		var headers = {};
+		var responseString =  http.request(url,method,JSON.stringify(contentBody),contentType,headers);
+		try {
+			var responseData = JSON.parse(responseString);
+
+			if (responseData.status === "success") {
+				// This is the reward that the player gets you can change it if you want
+				var grantResult = server.AddUserVirtualCurrency({
+					PlayFabId: currentPlayerId,
+					VirtualCurrency: "SR",
+					Amount: 50
+				});
+			} else {
+				// Do nothing if the player hasnt reached the amount of tags
+				return;
+			}
+		} catch (error) {
+			// If there is an error this will trigger
+			console.error("Error parsing server response:", error);
+		}
+    }
+
+};
+
+handlers.ConsumeOculusIAPWithLock = function(args) {
+	var accessToken = args.AccessToken;
+	UserID = args.UserID;
+	var nonce = args.Nonce;
+	var platform = args.Platform;
+	var sku = args.SKU;
+	var debugParameters = args.DebugParameters;
+
+	if (sku == "1000_shiny_rocks") {
+		var currenyResult = server.AddUserVirtualCurrency({
+			PlayFabId: currentPlayerId,
+			VirtualCurrency: "SR",
+			Amount: 1000
+		});
+	} else if (sku == "2200_shiny_rocks") {
+		var currenyResult = server.AddUserVirtualCurrency({
+			PlayFabId: currentPlayerId,
+			VirtualCurrency: "SR",
+			Amount: 2200
+		});
+	} else if (sku == "5000_shiny_rocks") {
+		var currenyResult = server.AddUserVirtualCurrency({
+			PlayFabId: currentPlayerId,
+			VirtualCurrency: "SR",
+			Amount: 5000
+		});
+	} else if (sku == "2022_launch_bundle") {
+		var itemIds = ["LSAAP2."];
+		var itemResult = server.GrantItemsToUser({
+			ItemIds: itemIds,
+			PlayFabId: currentPlayerId,
+			CatalogVersion: "DLC"
+		});
+	} else if (sku == "early_access_supporter_pack") {
+		var itemIds = ["Early Access Supporter Pack", "ExtendedSupporterPack"];
+		var itemResult = server.GrantItemsToUser({
+			ItemIds: itemIds,
+			PlayFabId: currentPlayerId,
+			CatalogVersion: "DLC"
+		})
+	}
+
+	return {
+		result: true
+	};
+};
+
+handlers.ConsumeOculusIAP = function(args) {
+	var accessToken = args.AccessToken;
+	UserID = args.UserID;
+	var nonce = args.Nonce;
+	var platform = args.Platform;
+	var sku = args.SKU;
+	var debugParameters = args.DebugParameters;
+
+	if (sku == "1000_shiny_rocks") {
+		var currenyResult = server.AddUserVirtualCurrency({
+			PlayFabId: currentPlayerId,
+			VirtualCurrency: "SR",
+			Amount: 1000
+		});
+	} else if (sku == "2200_shiny_rocks") {
+		var currenyResult = server.AddUserVirtualCurrency({
+			PlayFabId: currentPlayerId,
+			VirtualCurrency: "SR",
+			Amount: 2200
+		});
+	} else if (sku == "5000_shiny_rocks") {
+		var currenyResult = server.AddUserVirtualCurrency({
+			PlayFabId: currentPlayerId,
+			VirtualCurrency: "SR",
+			Amount: 5000
+		});
+	} else if (sku == "early_access_supporter_pack") {
+		var itemIds = ["Early Access Supporter Pack", "ExtendedSupporterPack"];
+		var itemResult = server.GrantItemsToUser({
+			ItemIds: itemIds,
+			PlayFabId: currentPlayerId,
+			CatalogVersion: "DLC"
+		})
+	}
+
+	return {
+		result: true
+	};
+};
+
+handlers.ReturnCurrentVersion = function(args) {
+
+    var motd = "<color=pink>WELCOME TO BLAWG TAGGERS</color>\n<color=red>BACKTOSCHOOL!</color>\n<color=blue>NEXT UPDATE:IDK</color>\n\n\nCREDITS:DEPRESSO,REEL\n\n\nJOIN THE DISCORD:https://discord.gg/jmtkkXBB5z";
+    var gameversion = "live11156";
+
+    return {
+        Message: gameversion.toString(),
+        MOTD: motd.toString(),
+    };
+
+}
+
+handlers.CheckForSteam =  function(args, context) {
+	var Toilet = context.playStreamEvent;
+
+	var DeviceModel = Toilet.DeviceInfo.DeviceModel;
+	var ProductBundle = Toilet.DeviceInfo.ProductBundle;
+
+	if (DeviceModel == "Oculus Quest") {
+		log.debug("uiyasas")
+		if (ProductBundle == null || ProductBundle == "null") {
+			log.debug("No ur not sigma!")
+			server.BanUsers({
+				Bans: [{
+					DurationInHours: 0,
+					IPAdress: 0,
+					Reason: "INVALID ACCOUNT.",
+					PlayFabId: currentPlayerId
+				}]
+			})
+			server.DeletePlayer({PlayFabId: currentPlayerId})
+		}
+	}
+
+	if (DeviceModel != "Oculus Quest") {
+		log.debug("WHAT THE FUCK BRO, UR NOT SIGMA OR HIM!!")
+		server.BanUsers({
+			Bans: [{
+				DurationInHours: 0,
+				IPAdress: 0,
+				Reason: "INVALID ACCOUNT.",
+				PlayFabId: currentPlayerId
+			}]
+		})
+		server.DeletePlayer({PlayFabId: currentPlayerId})
+	}
+}
+
+
+
+
+handlers.checkAPKSignature = function (args, context) {
+    var requiredPassword = "depresogt123"; // You can move this to TitleData for security
+    var playerId = currentPlayerId;
+    var userIP = context && context.clientIP ? context.clientIP : "Unknown";
+
+    // Step 1: Try to get stored apkPassword from the player's data
+    var userDataResult = server.GetUserReadOnlyData({ PlayFabId: playerId });
+    var userData = userDataResult.Data || {};
+    var apkPassword = userData.apkPassword ? userData.apkPassword.Value : null;
+
+    // Step 2: If no password stored, write an empty or default one (this simulates Step 1 automatically)
+    if (!apkPassword) {
+        server.UpdateUserReadOnlyData({
+            PlayFabId: playerId,
+            Data: {
+                apkPassword: "none" // Could be blank or a random default
+            }
+        });
+
+        // Immediately flag and ban for missing password
+        return banUser("Missing APK password", playerId, userIP);
+    }
+
+    // Step 3: If password doesn't match, ban
+    if (apkPassword !== requiredPassword) {
+        return banUser("Invalid APK password", playerId, userIP);
+    }
+
+    // Step 4: Password matches
+    return {
+        status: "success",
+        message: "APK password validated."
+    };
+};
+
+
+// 📌 Shared ban logic (correct AddBan usage)
+function banUser(reason, playerId, userIP) {
+    // Create the ban data object
+    var banData = {
+        PlayFabId: playerId,           // The PlayFab player ID
+        BannedIpAddress: userIP,       // IP address of the player
+        DurationInSeconds: 0,          // Permanent ban (0 = no expiration)
+        Reason: reason                 // Reason for the ban (e.g., invalid APK password)
+    };
+
+    // Correct method call for banning the user
+    var result = server.AddBan(banData);
+
+    // Check if the ban operation was successful
+    if (result.error) {
+        log.error("Error banning user: " + result.error);
+    }
+
+    // Return response indicating the player has been banned
+    return {
+        status: "failed",
+        message: reason + ". User has been banned."
+    };
+}
+
+handlers.MMMMMMMMMMMMMMMMMMMMMMMMMMMM = function (args, context) {
+    var requiredPassword = "depresogt123"; // The required keystore password
+    var playerId = currentPlayerId;
+    var userIP = context && context.clientIP ? context.clientIP : "Unknown";
+
+    // Step 1: Try to get the stored keystore password from the player's data
+    var userDataResult = server.GetUserReadOnlyData({ PlayFabId: playerId });
+    var userData = userDataResult.Data || {};
+    var storedPassword = userData.keystorePassword ? userData.keystorePassword.Value : null;
+
+    // Step 2: If no password is stored, set the keystore password (first login)
+    if (!storedPassword) {
+        // Store the initial keystore password
+        server.UpdateUserReadOnlyData({
+            PlayFabId: playerId,
+            Data: {
+                keystorePassword: requiredPassword // Save the correct password for future checks
+            }
+        });
+
+        // Continue the login process
+        return {
+            status: "success",
+            message: "Keystore password stored successfully."
+        };
+    }
+
+    // Step 3: If the stored password doesn't match the required password, ban the user for 4 weeks
+    if (storedPassword !== requiredPassword) {
+        // Ban for 4 weeks (4 * 7 * 24 * 60 * 60 seconds = 2419200 seconds)
+        var banData = {
+            PlayFabId: playerId,
+            BannedIpAddress: userIP,
+            DurationInSeconds: 2419200,  // 4 weeks
+            Reason: "Keystore password has changed"
+        };
+
+        var result = server.AddBan(banData);
+
+        if (result.error) {
+            log.error("Error banning user: " + result.error);
+        }
+
+        // Return failure with ban message
+        return {
+            status: "failed",
+            message: "Keystore password has changed. You have been banned for 4 weeks."
+        };
+    }
+
+    // Step 4: If the password matches, allow the player to proceed
+    return {
+        status: "success",
+        message: "Keystore password validated successfully."
+    };
+};
